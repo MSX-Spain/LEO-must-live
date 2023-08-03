@@ -21,7 +21,7 @@ rem With this line we are telling you that you have to start with the main funct
 @echo off&cls&call:main %1&goto:EOF
 
 :main
-    echo MSX Murcia 2020
+    echo MSX Spain 2023
     rem Ckequeando parámetros
     if [%1]==[] (call :create)
     if [%1]==[all] (call :create_all)
