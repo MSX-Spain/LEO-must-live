@@ -34,10 +34,6 @@ src: están los archivos fuente bas y asm
 
 obj: irán los archivos generados por el compilador
 
-bin: irán los binarios que tienen que ser copiados dentro del directrio de trabajo:
-
-
-
 assets: irán los archivos creados con programas que no tienen que ser copiados pero si pueden ser automatizados
 
     *.xspr son archivos creados con spritedevtools que serán convertidos a .bas o .bin
