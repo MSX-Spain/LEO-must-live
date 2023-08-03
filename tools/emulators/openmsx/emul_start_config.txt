@@ -1,0 +1,5 @@
+machine Philips_NMS_8255 
+set throttle off
+after realtime 1 "set throttle on"
+diska dsk/
+
