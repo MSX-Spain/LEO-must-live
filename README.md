@@ -32,8 +32,6 @@ make clean all: borrar los archivos temporales y los archivos obj, dsk, rom, cas
 
 src: están los archivos fuente bas y asm
 
-obj: irán los archivos generados por el compilador
-
 assets: irán los archivos creados con programas que no tienen que ser copiados pero si pueden ser automatizados
 
     *.xspr son archivos creados con spritedevtools que serán convertidos a .bas o .bin

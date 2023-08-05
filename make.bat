@@ -143,13 +143,18 @@ rem Esta función prepará los archivos fuente pata incluirlos en un dsk, cas
     rem Copiamos 
     copy src\autoexec.bas dsk
     copy src\loader.bas dsk
-    copy src\main.bas dsk
 
-   
+    rem copy "src\game\main.bas"+"\r\n"+"src\game\utils.bas"+"\r\n" "dsk\temp.bas"
+    type "src\game\initialize.bas" >> "dsk\temp.bas"
+    echo. >> "dsk\temp.bas"
+    type "src\game\main.bas" >> "dsk\temp.bas"
+    echo. >> "dsk\temp.bas"
+    type "src\game\utils.bas" >> "dsk\temp.bas"
+
     rem Le quitamos los comentarios a temp.bas
     if not exist tools\MSXTools\MSXTools.jar GOTO :not_exist_deletecomments
-    java -jar tools\MSXTools\MSXTools.jar -m=-m=delete-commits -o=src\main.bas 
-    move src\main-del.bas dsk\game.bas
+    java -jar tools\MSXTools\MSXTools.jar -m=-m=delete-commits -o=dsk\temp.bas 
+    move dsk\temp-del.bas dsk\game.bas
 
     rem lo tokenizamos
     rem if not exist tools\tokenizer\msxbatoken.py GOTO :not_exist_tokenizer
@@ -265,6 +270,7 @@ rem Machines:
     rem start /wait tools/emulators/openmsx/openmsx.exe -machine Sony_HB-F1XV -diska %TARGET_DSK%
 rem FMSX: FMSX https://fms.komkon.org/fMSX/fMSX.html
 rem para utilizar dir as disk tendrás que crear un directorio dsk/
+
 :abrir_emulador_con_dir_as_disk
     rem copy main.dsk tools\emulators\BlueMSX
     rem start /wait tools/emulators/BlueMSX/blueMSX.exe -diska dsk/

@@ -26,41 +26,32 @@ EndOfHelpMessage
 }
 
 function preparar_archivos_fuente() {
-    local FILES
-    local FILE
-    local DELFILES
-    local BASFILE_SRCDIR
-    ## escribe man find para estudiarlo
-    #SRCFILES=$(find "./src" -iname *.bas -type f)
-    ## Remove comments from files and put them on OBJ folder
-    #for BASFILE in ${SRCFILES[*]}; do
-    #    #Obtenemos la ruta completa del archivo
-    #    BASFILE_SRCDIR=$(dirname "$BASFILE")
-    #    #escribe "java -jar tools/MSXTools/MSXTools.jar -h" para la ayuda
-    #    java -jar tools/MSXTools/MSXTools.jar -m=d -o="${BASFILE_SRCDIR}"
-    #    #unix2dos ${OBJBASFILE}
-    #done
-    #Creamos el array de archivos que después recorreremos
-    FILES=$(find "./src" -type f)
-    for FILE in ${FILES[*]}; do
-        java -jar tools\MSXTools\MSXTools.jar -m=-m=delete-commits -o="${FILE}"
-    done
-
-    #for BAS in src/*bas; do
-    #    java -jar tools/MSXTools/MSXTools.jar -m=d -o="${BAS}"
-    #    #mv "${BAS}"
-    #done
+    local BASFILE
+    local SRCFILESDIRGAME
+    local SRCFILESDEL
     # Creamos la carpeta onj si no existe
-    #mkdir -p ./obj
-    #java -jar tools/MSXTools/MSXTools.jar -m=d -o=src/main.bas
-    #java -jar tools/MSXTools/MSXTools.jar -m=d -o=src/loader.bas
-    #java -jar tools/MSXTools/MSXTools.jar -m=d -o=src/autoexec.bas
-    mv main-del.bas obj/game.bas
-    mv loader-del.bas obj/loader.bas
-    mv autoexec-del.bas obj/autoexec.bas
-    unix2dos obj/game.bas
-    unix2dos obj/loader.bas
-    unix2dos obj/autoexec.bas
+    mkdir -p ./obj
+    #Copiamos el autoexec y el loader
+    cp src/autoexec.bas dsk
+    cp src/loader.bas dsk
+    #Le quitamos los comentarios a los archivos que haya dentro de la carpeta src/game
+    SRCFILESDIRGAME=$(find "./src/game" -iname *.bas -type f)
+    for BASFILE in ${SRCFILESDIRGAME[*]}; do
+      java -jar tools/MSXTools/MSXTools-mac.jar -m=delete-comments -o="${BASFILE}"
+    done
+    #Utilizamos los del para crear uno solo
+    SRCFILESDEL=$(find "./src/game" -iname *-del.bas -type f)
+    for BASFILE in ${SRCFILESDEL[*]}; do
+        cat "${BASFILE}" >> ./dsk/game.bas
+        rm "${BASFILE}"
+    done
+    #Los pasamos a formato dos
+    unix2dos ./dsk/game.bas
+
+    #Método 2 de borrado de comentarios
+    #grep -v "^1 *'" ${BASFILE} > ${OBJBASFILE}
+
+
 }
 
 function convertir_imagenes(){
@@ -83,11 +74,12 @@ function crear_dir_as_disk(){
         cp "${FILE}" dsk/
     done
 
+
 }
 
 function abrir_emulador_con_dsk(){
     #/Applications/openMSX.app/Contents/MacOS/openMSX -machine Philips_NMS_8255  -diska dsk/ &
-    /Applications/openMSX.app/Contents/MacOS/openMSX -script ./tools/emulators/openMSX-16.0/emul_start_config.txt &
+    /Applications/openMSX.app/Contents/MacOS/openMSX -script ./tools/emulators/openMSX/emul_start_config.txt &
 }
 function cleanObjects() {
    echo "objetos borrados"
@@ -103,11 +95,12 @@ function cleanObjects() {
 # Check parameter number
 if (( $# < 1 )); then
     echo Escogiste crear dir as disk
+    cleanObjects
     preparar_archivos_fuente
-    convertir_imagenes
-    crear_dir_as_disk
+    #convertir_imagenes
+    #crear_dir_as_disk
     abrir_emulador_con_dsk
-    #cleanObjects
+
 fi
 
 ## Check parameter
