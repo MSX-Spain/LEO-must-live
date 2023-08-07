@@ -1,0 +1,59 @@
+<mxfile host="app.diagrams.net" modified="2023-08-07T04:59:55.793Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" etag="RJR1fEZjffbRCSYMgqlf" version="21.6.1" type="device">
+  <diagram name="Página-1" id="095T3vEI91lHOqFs_s4Z">
+    <mxGraphModel dx="954" dy="759" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-1" value="Inicializar MSX&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="354" y="30" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-2" value="&lt;div style=&quot;text-align: center;&quot;&gt;Fase1-inicialización&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;&quot;&gt;se pinta el mapa de tiles&lt;/div&gt;&lt;div style=&quot;&quot;&gt;se inicializan os enemigos, se pintan los objetos y el marcador&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;se inicializan las variables del player&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="180" y="910" width="536" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-3" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;&quot;&gt;Fase 1 - actualización&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;pintamos los enemigos&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;Actualizamos los enemigos&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="172" y="1080" width="540" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-4" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.592;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="gttiDGOxhZpY5PQ1_-iL-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="60" as="sourcePoint" />
+            <mxPoint x="770" y="550.5" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="780" y="60" />
+              <mxPoint x="770" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-5" value="Goto&lt;br&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="30" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-7" value="Sistema de input" style="shape=tape;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="120" width="230" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-9" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&amp;lt;-&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="374.5" y="420" width="56" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-10" value="&lt;font style=&quot;font-size: 27px;&quot;&gt;^&lt;/font&gt;&lt;br&gt;|" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="374.5" y="260" width="55.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-11" value="|&lt;br&gt;V" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="340" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-12" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;-&amp;gt;&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="386" y="490" width="56" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-13" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;&amp;gt;&lt;br&gt;/&lt;br&gt;&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="560" width="62" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-14" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;&amp;lt;&lt;br&gt;\&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="386" y="640" width="56" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-15" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="386" y="730" width="56" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gttiDGOxhZpY5PQ1_-iL-16" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="386" y="830" width="56" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -135,7 +135,7 @@ rem Esta función prepará los archivos fuente pata incluirlos en un dsk, cas
 :preparar_archivos_fuente
     rem del /F /Q obj\loader.bas
     rem creamos la carpeta obj (objects) si no existe, si existe borramos su contenido
-    If not exist .\obj (md .\obj) else (call :clean_objets)
+    rem If not exist .\obj (md .\obj) else (call :clean_objets)
 
     rem Copiamos todos los archivos.bas de la carpeta de src(fuentes)/game a la carpeta obj y mostramos un mensaje
     rem for /R src/game %%a in (*.bas) do (
@@ -153,7 +153,7 @@ rem Esta función prepará los archivos fuente pata incluirlos en un dsk, cas
 
     rem Le quitamos los comentarios a temp.bas
     if not exist tools\MSXTools\MSXTools.jar GOTO :not_exist_deletecomments
-    java -jar tools\MSXTools\MSXTools.jar -m=-m=delete-commits -o=dsk\temp.bas 
+    java -jar tools\MSXTools\MSXTools.jar -m=-m=delete-comments -o=dsk\temp.bas 
     move dsk\temp-del.bas dsk\game.bas
 
     rem lo tokenizamos

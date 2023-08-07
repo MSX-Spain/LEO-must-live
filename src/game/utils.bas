@@ -7,7 +7,6 @@
         9250 next J
         9260 sprite$(i)=sp$
     9270 next i
-
     9350 rem sprites data definitions
     9360 rem data definition sprite 0, name: Sprite-2
     9370 data 0,0,0,0,0,0,0,24

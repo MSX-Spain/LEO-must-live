@@ -30,7 +30,7 @@ function preparar_archivos_fuente() {
     local SRCFILESDIRGAME
     local SRCFILESDEL
     # Creamos la carpeta onj si no existe
-    mkdir -p ./obj
+    #mkdir -p ./obj
     #Copiamos el autoexec y el loader
     cp src/autoexec.bas dsk
     cp src/loader.bas dsk
