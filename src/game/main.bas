@@ -58,7 +58,7 @@
     216 IF POINT(X+12,Y+10)=5 THEN GOSUB 5060
 
     230 ON F GOSUB 330,530,730,930,1130,1330,1530
-
+240 goto 100
 
 
 
@@ -67,51 +67,51 @@
 300 'gosub 11000:'se pinta el mapa de tiles y se inicializa
 310 'se inicializan os enemigos, se pintan los objetos y el marcador'
 320 'se inicializan las variables del player'
-330 if x> 240 then goto 500
+330 if x> 240 then goto 500 else goto 100
 340 'pintamos los enemigos'
 350 'Actualizamos los enemigos'
-390 goto 100
+390 return 100
 
 1 'Fase 2'
 1'--------
 500 'lo mismo que en la fase 1'
-530 if x>240 then goto 700
+530 if x>240 then goto 700 else goto 100
 540 'lo mismo que en la fase 1'
-590 goto 100
+590 return 100
 
 1 'Fase 3'
 1'--------
 700 'lo mismo que en la fase 1'
-730 if x>240 then goto 900
+730 if x>240 then goto 900 else goto 100
 740 'lo mismo que en la fase 1'
-790 goto 100
+790 return 100
 
 1 'Fase 4'
 1'--------
 900 'lo mismo que en la fase 1'
-930 if x>240 then goto 1100
+930 if x>240 then goto 1100 else goto 100
 940 'lo mismo que en la fase 1'
-990 goto 100
+990 return 100
 
 1 'Fase 5'
 1'--------
 1100 'lo mismo que en la fase 1'
 1130 if x>240 then goto 1300
 1140 'lo mismo que en la fase 1'
-1190 goto 100
+1190 return 100
 
 1 'Fase 6'
 1'--------
 1300 'lo mismo que en la fase 1'
-1330 if x>240 then goto 1500
+1330 if x>240 then goto 1500 else goto 100
 1340 'lo mismo que en la fase 1'
-1390 goto 100
+1390 return 100
 
 1 'Fase 7'
 1'--------
 1500 'lo mismo que en la fase 1'
-1530 if x>240 then goto 80
-1590 goto 100
+1530 if x>240 then goto 80 else goto 100
+1590 return 100
 
 
 1' Pantalla ganadora
