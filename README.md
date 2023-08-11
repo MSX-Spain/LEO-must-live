@@ -3,8 +3,7 @@
 
 SAM debe vivir esperamos que sea un juego para el concurso de Konamito de MSXBlog
 
- https://msx-spain.github.io/SAM-must-live/?disk=game.dsk
-
+ https://msx-spain.github.io/SAM-must-live/
 # Uso
 
 Escriba en en el terminal o ventana de comandos:
