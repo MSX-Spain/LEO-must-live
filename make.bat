@@ -60,16 +60,14 @@ goto:eof
     call :crear_cas
     call :crear_wav
     call :abrir_emulador_con_dsk
-    call :clean_objets
 goto:eof
 
 :create_dsk
     echo Escogiste crear dsk
     call :preparar_archivos_fuente
-    call :convertir_imagenes
+    rem call :convertir_imagenes
     call :crear_dsk
     call :abrir_emulador_con_dsk
-    call :clean_objets
 goto:eof
 
 
@@ -80,7 +78,6 @@ goto:eof
     call :crear_dsk
     call :crear_rom
     call :abrir_emulador_con_rom
-    call :clean_objets
 goto:eof
 
 
@@ -145,7 +142,7 @@ rem Esta función prepará los archivos fuente pata incluirlos en un dsk, cas
     copy src\loader.bas dsk
 
     rem copy "src\game\main.bas"+"\r\n"+"src\game\utils.bas"+"\r\n" "dsk\temp.bas"
-    type "src\game\initialize.bas" >> "dsk\temp.bas"
+    type "src\game\initialize.bas" > "dsk\temp.bas"
     echo. >> "dsk\temp.bas"
     type "src\game\main.bas" >> "dsk\temp.bas"
     echo. >> "dsk\temp.bas"
@@ -197,18 +194,12 @@ rem Creará un nuevo archivo .dsk con los archivos .bin y .bas especificados
     if not exist tools\Disk-Manager-v0.17 GOTO :not_exist_disk_manager
     rem Crear nuevo dsk
     rem como diskmanager no puede crear dsk vacíos desde el cmd copiamos y pegamos uno vacío
-    if exist %TARGET_DSK% del /f /Q %TARGET_DSK%
-    copy tools\Disk-Manager-v0.17\main.dsk .\%TARGET_DSK%
+    if exist game.dsk del /f /Q game.dsk
+    copy tools\Disk-Manager-v0.17\game.dsk .\
     rem añadimos todos los .bas de la carpeta obj al disco
     rem por favor mirar for /?
-    for /R obj/ %%a in (*.bas) do (
-        start /wait tools/Disk-Manager-v0.17/DISKMGR.exe -A -F -C %TARGET_DSK% "%%a")   
-
-    rem añadimos todos los arhivos binarios de la carpeta bin al disco
-    rem recuerda que un sc2, sc5, sc8 es también un archivo binario, renombralo
-    rem por favor mirar for /?
-    for /R bin/ %%a in (*.*) do (
-        start /wait tools/Disk-Manager-v0.17/DISKMGR.exe -A -F -C %TARGET_DSK% "%%a")   
+    for /R dsk/ %%a in (*.*) do (
+        start /wait tools/Disk-Manager-v0.17/DISKMGR.exe -A -F -C game.dsk "%%a")    
 goto:eof
 
 
@@ -283,14 +274,14 @@ goto:eof
     rem copy %TARGET_DSK% tools\emulators\BlueMSX
     rem start /wait tools/emulators/BlueMSX/blueMSX.exe -diskA %TARGET_DSK%
     rem start /wait tools/emulators/fMSX/fMSX.exe -diska %TARGET_DSK%
-    rem start /wait tools/emulators/openmsx-16.0/openmsx.exe -machine Philips_NMS_8255 -diska %TARGET_DSK%
-    start tools\emulators\openmsx-16.0\openmsx.exe -script tools\emulators\openmsx-16.0\emul_start_config.txt
+    start /wait tools/emulators/openmsx/openmsx.exe -machine Philips_NMS_8255 -diska game.dsk
+    rem start tools\emulators\openmsx-16.0\openmsx.exe -script tools\emulators\openmsx-16.0\emul_start_config.txt
 goto:eof
 :abrir_emulador_con_cas
     rem copy %TARGET_CAS% tools\emulators\BlueMSX
     rem start /wait tools/emulators/BlueMSX/blueMSX.exe -cas %TARGET_CAS%
     rem start /wait tools/emulators/fMSX/fMSX.exe -cas %TARGET_CAS%
-    start /wait tools/emulators/openmsx-16.0/openmsx.exe -machine Philips_NMS_8255 -cassetteplayer %TARGET_CAS%
+    start /wait tools/emulators/openmsx/openmsx.exe -machine Philips_NMS_8255 -cassetteplayer %TARGET_CAS%
 goto:eof
 :abrir_emulador_con_wav
     rem start /wait tools/emulators/fMSX/fMSX.exe -cas %TARGET_WAV%
@@ -300,7 +291,7 @@ goto:eof
     copy %TARGET_ROM% tools\emulators\BlueMSX
     start /wait tools/emulators/BlueMSX/blueMSX.exe -rom1 %TARGET_ROM%
     rem start /wait tools/emulators/fMSX/fMSX.exe -cas %TARGET_ROM%
-    rem start /wait tools/emulators/openmsx-16.0/openmsx.exe -machine Philips_NMS_8255 -carta %TARGET_ROM%
+    rem start /wait tools/emulators/openmsx/openmsx.exe -machine Philips_NMS_8255 -carta %TARGET_ROM%
 goto:eof
 
 
