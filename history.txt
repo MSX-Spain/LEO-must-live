@@ -1,0 +1,4 @@
+Hacer patrones grandes de tejados.
+Hacer un scroll horizontal con velocidad constante donde el gato tenga que saltar obstáculos.
+El camino se divide de forma laberíntica en tres alturas a lo largo del recorrido. 
+Si te equivocas y vas por el camino que no tiene salida, mueres y a empezar nivel.

@@ -1,9 +1,9 @@
 
-# SAM must live
+# LEO must live
 
-SAM debe vivir esperamos que sea un juego para el concurso de Konamito de MSXBlog
+LEO debe vivir esperamos que sea un juego para el concurso de Konamito de MSXBlog
 
-https://msx-spain.github.io/SAM-must-live/?disk=game.dsk
+https://msx-spain.github.io/LEO-must-live/?disk=game.dsk
 
 https://MSX-Spain.github.io/?disk=game.dsk
 

@@ -10,41 +10,41 @@
     1 '    9260 sprite$(i)=sp$
     1 '9270 next i
     9010 'call turbo on
-    9020 for i=0 to (32*5)-1
+    9020 for i=0 to (32*6)-1
         9030 read b:vpoke 14336+i,b
     9040 next i
     9050 'call turbo off
-    9350 rem sprites data definitions
-    9360 rem data definition sprite 0, name: Sprite-2
-    9370 data 0,0,0,0,0,0,0,24
-    9380 data 32,32,35,31,15,28,48,48
-    9390 data 0,0,0,0,0,0,0,20
-    9400 data 26,30,188,232,244,234,10,0
-    9410 rem data definition sprite 1, name: Sprite-2
-    9420 data 0,0,0,0,0,0,0,0
-    9430 data 0,192,49,15,7,6,1,0
-    9440 data 0,0,0,0,0,0,0,10
-    9450 data 13,15,222,244,232,80,168,168
-    9460 rem data definition sprite 2, name: Sprite-2
-    9470 data 0,0,0,0,0,0,0,40
-    9480 data 88,120,61,23,47,87,80,0
-    9490 data 0,0,0,0,0,0,0,24
-    9500 data 4,4,196,248,240,56,12,12
-    9510 rem data definition sprite 3, name: Sprite-2
-    9520 data 0,0,0,0,0,0,0,80
-    9530 data 176,240,123,47,23,10,21,21
-    9540 data 0,0,0,0,0,0,0,0
-    9550 data 0,2,140,240,224,96,128,0
-    9560 rem data definition sprite 4, name: Sprite-2
-    9570 data 0,0,0,0,0,2,3,3
-    9580 data 1,1,3,6,5,6,26,33
-    9590 data 0,0,0,0,0,32,224,224
-    9600 data 192,192,224,240,240,160,160,192
-    9610 rem data definition sprite 5, name: Sprite-2
-    9620 data 0,0,0,0,0,2,1,3
-    9630 data 19,9,7,7,3,3,1,2
-    9640 data 0,0,0,0,0,64,128,192
-    9650 data 200,144,224,224,224,192,128,64
+
+    9360 data 0,0,0,0,33,195,192,192
+    9370 data 192,63,63,62,96,160,240,240
+    9380 data 0,0,0,224,208,252,108,112
+    9390 data 240,240,240,240,248,102,54,48
+    9400 rem data definition sprite 1, name: Sprite-1
+    9410 data 0,0,0,0,0,0,240,112
+    9420 data 48,15,15,15,15,5,6,6
+    9430 data 0,0,240,120,116,31,27,28
+    9440 data 60,252,252,188,48,176,176,248
+
+    9445 data 0,0,0,7,11,63,54,14
+    9450 data 15,15,15,15,31,102,108,12
+    9460 data 0,0,0,0,132,194,2,2
+    9470 data 2,252,252,124,6,4,14,14
+    9480 rem data definition sprite 3, name: Sprite-3
+    9490 data 0,0,15,30,46,248,216,56
+    9500 data 60,63,63,61,12,13,13,31
+    9510 data 0,0,0,0,0,0,14,14
+    9520 data 12,240,240,240,240,160,96,96
+    9530 rem data definition sprite 4, name: Sprite-3
+    9540 data 0,0,7,15,31,7,3,3
+    9550 data 3,7,15,15,15,6,6,15
+    9560 data 0,0,192,224,240,192,128,128
+    9570 data 128,192,224,224,224,192,192,224
+    9580 rem data definition sprite 5, name: Sprite-3
+    9590 data 0,0,7,15,31,7,3,3
+    9600 data 19,15,15,15,15,12,16,0
+    9610 data 0,0,192,224,240,192,128,128
+    9620 data 144,224,224,224,224,192,32,0
+   
 9990 return 
 
 1 'En screen 2'
@@ -241,8 +241,8 @@
 
 
 
-    20170 'call turbo off
-20190 return
+    19000 'call turbo off
+19990 return
 
 
 1 '14336 / h3800 -> 16383 / 3fff
