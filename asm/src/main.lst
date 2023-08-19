@@ -1,0 +1,321 @@
+Sjasm Z80 Assembler v0.42c - www.xl2s.tk             [2023.08.19 - 05:24:47]
+
+src\main.asm
+Errors: 0
+
+       1   00:0000                             output "game.bin"   ; debemos de poner esta instrucción o nos generaría un archivo.out, ponle espacios al principio
+       2   00:8200                              
+       3   00:8200                      ;Llamadas a rutinas bios
+       4   00:8200                      
+       5   00:8200                      ;Funciones
+       6   00:8200  (00:009F)           CHGET equ #009F    ; Se queda esperando que se pulse una tecla
+       7   00:8200  (00:00A2)           CHPUT equ #00A2    ; escribe el caracter ascii almacenado en a    
+       8   00:8200  (00:00D5)           GTSTCK equ #00D5   ; Devuelve el estado del joystick, necesita previamente poner algo en el registro A (0 cursor, 1 puerto joystick 1, 2 puerto joystick 2)                     
+       9   00:8200  (00:00D8)           GTTRIG equ #00D8   ; Devuelve el estado del botón destinado al disparo, necesita que A se ponga que botón es el que va dispara (0 barra espacio, 1 puerto joystick 1 boton A, etc)
+      10   00:8200  (00:005F)           CHGMOD equ #005F   ; Cambia el modo de screen pero previamente necesita que se le asigne el modo en el registro a
+      11   00:8200  (00:005C)           LDIRVM equ #005C   ; Tansfiere bloques de la RAM a la VRAM, es la más importante, necesita previamente asignar valor al registro bc con la longitud, dc con la dirección de inicio de la VRAM y hl con la dirección de inicio de la RAM:
+      12   00:8200  (00:0059)           LDIRMV equ #0059
+      13   00:8200  (00:013E)           RDVDP equ #013E    ; Lee el registro de estado del VDP
+      14   00:8200  (00:0047)           WRTVDP equ #0047   ; Escribe en los registros del VDP 
+      15   00:8200  (00:008D)           GRPPRT equ 0x008D  ; Pinta un carácter en modo gráfico
+      16   00:8200  (00:00C0)           BEEP equ #00C0     ; Genera un beep
+      17   00:8200  (00:00C3)           CLS equ #00C3      ; Borra la pantalla
+      18   00:8200  (00:0062)           CHGCLR equ #0062   ; Esta rutina necesita que se acceda 1a las constanes de FORCLR,BAKCLR y BDRCLR con un ld,hl(FORCLR) obtenemos su posición
+      19   00:8200                      ;Constantes bios
+      20   00:8200  (00:F3E9)           FORCLR equ 0xF3E9  ; color de tinta (+1=color del fondo, +1 color del borde) 
+      21   00:8200  (00:0141)           SNSMAT equ #0141   ; Devuelve un buffer con estado de las teclas de la fila especifixada en el registro A
+      22   00:8200                      
+      23   00:8200                      
+      24   00:8200                      ;Constantes
+      25   00:8200                      ;Llamadas direcciones de la ram
+      26   00:8200  (00:F3E0)           RG15AV equ #F3E0 ; alamcena el valor del registro 1 de escritura del VDP, hay unas rutinas de la bios que guardan es entas direcciones valores globals del sistema
+      27   00:8200                      
+      28   00:8200                      
+      29   00:8200                      
+      30   00:8200                          ; https://www.faq.msxnet.org/suffix.html
+      31   00:8200  FE                      db   #fe              
+      32   00:8201  00 82                   dw   INICIO            
+      33   00:8203  62 83                   dw   FINAL             
+      34   00:8205  00 82                   dw   MAIN               
+      35   00:8207                          
+      36   00:8207                          org 33280                 
+      37   00:8200                      INICIO:
+      38   00:8200                       
+      39   00:8200                      
+      40   00:8200                      MAIN:  
+      41   00:8200  CD B0 82                call poner_pantalla_en_modo_screen_2
+      42   00:8203  CD D1 82                call volcar_sprite_y_atributos_en_VRAM
+      43   00:8206  CD 0D 82                call inicializar_personaje_principal
+      44   00:8209  CD 1E 82                call main_loop
+      45   00:820C                      
+      46   00:820C  C9                      ret
+      47   00:820D                      
+      48   00:820D                      
+      49   00:820D                      
+      50   00:820D                      
+      51   00:820D                      inicializar_personaje_principal:
+      52   00:820D                          ;el entender como fncionan los registros ix del z80 es crucial, lo que hacen es servir de referencia o puntero para las posiciones de moeoria
+      53   00:820D  DD 21 5E 83             ld ix, atributos_personaje_sprite ;fijate en mover_persona_derecha,izquieda, arriba y abajo
+      54   00:8211  21 5E 83                ld hl, atributos_personaje_sprite ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 0000 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+      55   00:8214  11 00 1B                ld de, #1b00; la rutina necesita haber cargado previamente con de la dirección de inicio de la VRAM          
+      56   00:8217  01 04 00                ld bc,4; solo tenemos 1 plano de un personaje
+      57   00:821A  CD 5C 00                call  LDIRVM ; Mira arriba, pone la explicación
+      58   00:821D  C9                      ret
+      59   00:821E                      main_loop:
+      60   00:821E  76                      halt ; sincroniza el teclado y pantalla con el procesador (que va muy rápido)
+      61   00:821F                      
+      62   00:821F  CD 27 82                call check_cursors
+      63   00:8222  CD 40 82                call check_space_bar
+      64   00:8225                          
+      65   00:8225                          ;Salto incondicional
+      66   00:8225  18 F7                   jr main_loop
+      67   00:8227                      
+      68   00:8227                      
+      69   00:8227                      
+      70   00:8227                      
+      71   00:8227                      
+      72   00:8227                      
+      73   00:8227                      check_cursors:
+      74   00:8227  AF                      xor a
+      75   00:8228  CD D5 00                call GTSTCK
+      76   00:822B  FE 01                   cp 1
+      77   00:822D  CC 4E 82                call z, mover_personaje_arriba
+      78   00:8230  FE 03                   cp 3
+      79   00:8232  CC 6A 82                call z, mover_personaje_derecha
+      80   00:8235  FE 05                   cp 5
+      81   00:8237  CC 5C 82                call z, mover_personaje_abajo
+      82   00:823A  FE 07                   cp 7
+      83   00:823C  CC 8D 82                call z, mover_personaje_izquierda
+      84   00:823F                      
+      85   00:823F                      
+      86   00:823F                      
+      87   00:823F  C9                      ret
+      88   00:8240                      
+      89   00:8240                      check_space_bar:
+      90   00:8240                          ;Ponemos a 0 el registro a que lo necesita GTTRIG para indicarle que vamos a trabajar con la barra espciadora
+      91   00:8240  AF                      xor a
+      92   00:8241  CD D8 00                call GTTRIG
+      93   00:8244                          ;GTTRIG devuelve 255 si está presionada y 0 sino lo está
+      94   00:8244  FE FF                   cp 255
+      95   00:8246  CA 4A 82                jp z, make_sound
+      96   00:8249                         
+      97   00:8249  C9                      ret
+      98   00:824A                      make_sound:
+      99   00:824A  CD C0 00                call BEEP
+     100   00:824D  C9                      ret
+     101   00:824E                      
+     102   00:824E                      
+     103   00:824E                      
+     104   00:824E                      mover_personaje_arriba:
+     105   00:824E                          ;obtenemos el valor de la posición y del plano 0 y lo ponemos en la dirección de la etiqueta atributos...
+     106   00:824E  21 00 1B                ld hl, #1b00 ;Start address of VRAM
+     107   00:8251  CD 4A 00                call #004a ;leemos el contenido de la VRAM
+     108   00:8254  D6 08                   sub 8
+     109   00:8256  CD 4D 00                call #004d
+     110   00:8259                      
+     111   00:8259  CD 1E 82                call main_loop
+     112   00:825C                      mover_personaje_abajo:
+     113   00:825C  21 00 1B                ld hl, #1b00 ;Start address of VRAM
+     114   00:825F  CD 4A 00                call #004a ;leemos el contenido de la VRAM
+     115   00:8262  C6 08                   add 8
+     116   00:8264  CD 4D 00                call #004d
+     117   00:8267                         
+     118   00:8267  CD 1E 82                call main_loop
+     119   00:826A                      mover_personaje_derecha:
+     120   00:826A  21 01 1B                ld hl, #1b01 ;Start address of VRAM
+     121   00:826D  11 61 EA                ld de, 60001 ;Start address of memory
+     122   00:8270  01 01 00                ld bc, 1 ;Block length
+     123   00:8273  CD 59 00                call LDIRMV ;realizamos la trasferencia
+     124   00:8276                      
+     125   00:8276                      
+     126   00:8276  3A 61 EA                ld a,(60001)
+     127   00:8279  C6 08                   add 8
+     128   00:827B  32 61 EA                ld (60001), a ; se lo metemos al atributo
+     129   00:827E                          
+     130   00:827E  21 61 EA                ld hl, 60001 ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 0000 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+     131   00:8281  11 01 1B                ld de, #1b01; la rutina necesita haber cargado previamente con de la dirección de inicio de la VRAM          
+     132   00:8284  01 01 00                ld bc,1; solo tenemos 1 plano de un personaje
+     133   00:8287  CD 5C 00                call  LDIRVM ; Mira arriba, pone la explicación
+     134   00:828A  CD 1E 82                call main_loop
+     135   00:828D                      mover_personaje_izquierda:
+     136   00:828D  21 01 1B                ld hl, #1b01 ;Start address of VRAM
+     137   00:8290  11 61 EA                ld de, 60001 ;Start address of memory
+     138   00:8293  01 01 00                ld bc, 1 ;Block length
+     139   00:8296  CD 59 00                call LDIRMV ;realizamos la trasferencia
+     140   00:8299                      
+     141   00:8299                      
+     142   00:8299  3A 61 EA                ld a,(60001)
+     143   00:829C  D6 08                   sub 8
+     144   00:829E  32 61 EA                ld (60001), a ; se lo metemos al atributo
+     145   00:82A1                          
+     146   00:82A1  21 61 EA                ld hl, 60001 ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 0000 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+     147   00:82A4  11 01 1B                ld de, #1b01; la rutina necesita haber cargado previamente con de la dirección de inicio de la VRAM          
+     148   00:82A7  01 01 00                ld bc,1; solo tenemos 1 plano de un personaje
+     149   00:82AA  CD 5C 00                call  LDIRVM ; Mira arriba, pone la explicación
+     150   00:82AD  CD 1E 82                call main_loop
+     151   00:82B0                      
+     152   00:82B0                      
+     153   00:82B0                      
+     154   00:82B0                      
+     155   00:82B0                      
+     156   00:82B0                      
+     157   00:82B0                      
+     158   00:82B0                      
+     159   00:82B0                      poner_pantalla_en_modo_screen_2:
+     160   00:82B0                           ;Cambiamos el modo de pantalla
+     161   00:82B0  3E 02                   ld  a,2     ; La rutina CHGMOD nos obliga a poner en el registro a el modo de pantalla que queremos
+     162   00:82B2  CD 5F 00                call CHGMOD ; Mira arriba, pone la explicación
+     163   00:82B5                      
+     164   00:82B5  3A E0 F3                ld a,(RG15AV) ; esta direcciónd e memoria alamcena el valor el registro de lectura del VDP, mira arriba
+     165   00:82B8                          ;En or 0+0=0, 0+1=1, 1+1=1
+     166   00:82B8                          ;En and 0+0=0, 0+1=0, 1+1=1
+     167   00:82B8                          ;Con eso queremos cambiar los bits 7 y 8 del registro de escritura 1 del z80, queremos poner el 7 a 1 y también el 8 a 1
+     168   00:82B8                          ;el bit 7 del registro 1 pone los sprites en modo 16x16 (los que nostros queremos dibujar)
+     169   00:82B8                          ;el bit 8 queremos desactivarlo para no utilizar los sprites agrandados
+     170   00:82B8  F6 02                   or 00000010b ; con or poniendo un 0 siempre respetamos los bits que hay y poniendo 1 1 obligamos a que sea 1
+     171   00:82BA  E6 FE                   and 11111110b ; con and obligamos a que el ultimo bit valga 0
+     172   00:82BC                      
+     173   00:82BC  47                      ld b,a ;carga en b el valor de a
+     174   00:82BD  0E 01                   ld c,1 ; La rutina WRTVDP necesta que le carguemos previamente el entero en C del z80 del registro que queroms modificar
+     175   00:82BF  CD 47 00                call WRTVDP ;Escribe en los registros del VDP 
+     176   00:82C2                      
+     177   00:82C2                          ;Ponemos los colores de:
+     178   00:82C2  21 E9 F3                ld      hl,FORCLR
+     179   00:82C5  36 0F               	ld      [hl],15; le poneos el 15 en tinta que es el blanco
+     180   00:82C7  23                  	inc     hl
+     181   00:82C8  36 01               	ld      [hl],1 ; le metemos 1 en fondo que es el negro
+     182   00:82CA  23                  	inc		hl
+     183   00:82CB  36 06               	ld		[hl],6 ;en borde también el negro
+     184   00:82CD  CD 62 00            	call    CHGCLR
+     185   00:82D0  C9                      ret
+     186   00:82D1                      
+     187   00:82D1                      volcar_sprite_y_atributos_en_VRAM:
+     188   00:82D1                      ;por favor antes de nada mira este dibujo: https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png
+     189   00:82D1                      ;-----------------------------Definición del sprite en #3800  y volcado a la VRAM-------------------------------------------
+     190   00:82D1                      
+     191   00:82D1  21 DE 82                ld hl, sprites_personaje ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 03800 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+     192   00:82D4  11 00 38                ld de, #3800; la rutina necesita haber cargado previamente con de la dirección de inicio de la VRAM          
+     193   00:82D7  01 80 00                ld bc, 8*4*4; 8 byte de cada tile * 4 que son los sprites de 16x16 y * 4 que son los sprites o planos que forman el sprite
+     194   00:82DA  CD 5C 00                call  LDIRVM ; Mira arriba, pone la explicación
+     195   00:82DD                      
+     196   00:82DD                      ;-----------------------------Definición de los atributos en #1b00 y volcado a la VRAM------------------------------------
+     197   00:82DD                      
+     198   00:82DD  C9                      ret
+     199   00:82DE                      ;para una expresión hexadecimal se puede utilizar tambiénm el sign $ mirar http://www.xl2s.tk/sjasmman4.html
+     200   00:82DE                      ;Definición de sprite 4 tiles
+     201   00:82DE                      
+     202   00:82DE                      sprites_personaje:
+     203   00:82DE                          ; sprite 1
+     204   00:82DE                          ; patrón 1 del sprite_personaje, del @00 al #04 mirando arriba
+     205   00:82DE                          DB $03,$03,$03,$1F,$17,$17,$17,$17
+     205   00:82DE  03 03 03 1F 17 17 17 17 
+     206   00:82E6                          DB $17,$07,$04,$04,$04,$04,$04,$0C
+     206   00:82E6  17 07 04 04 04 04 04 0C 
+     207   00:82EE                          DB $00,$00,$00,$E0,$A0,$A0,$A0,$A0
+     207   00:82EE  00 00 00 E0 A0 A0 A0 A0 
+     208   00:82F6                          DB $A0,$80,$80,$80,$80,$80,$80,$C0
+     208   00:82F6  A0 80 80 80 80 80 80 C0 
+     209   00:82FE                      
+     210   00:82FE                          ; sprite 2
+     211   00:82FE                          ; patrón 2 del sprite_personaje, del #04 al #07, mirando hacia la izquierda
+     212   00:82FE                          DB $01,$03,$01,$03,$03,$03,$03,$03
+     212   00:82FE  01 03 01 03 03 03 03 03 
+     213   00:8306                          DB $03,$03,$02,$02,$02,$02,$02,$07
+     213   00:8306  03 03 02 02 02 02 02 07 
+     214   00:830E                          DB $80,$80,$80,$C0,$C0,$C0,$C0,$C0
+     214   00:830E  80 80 80 C0 C0 C0 C0 C0 
+     215   00:8316                          DB $C0,$80,$80,$80,$80,$80,$80,$80
+     215   00:8316  C0 80 80 80 80 80 80 80 
+     216   00:831E                      
+     217   00:831E                          ; sprite 3
+     218   00:831E                          ; patrón 3 del sprite_personaje, del #08 al # #0b, mirando hacia la derecha
+     219   00:831E                          DB $03,$03,$03,$07,$07,$07,$07,$07
+     219   00:831E  03 03 03 07 07 07 07 07 
+     220   00:8326                          DB $07,$03,$02,$02,$02,$02,$02,$03
+     220   00:8326  07 03 02 02 02 02 02 03 
+     221   00:832E                          DB $00,$80,$00,$80,$80,$80,$80,$80
+     221   00:832E  00 80 00 80 80 80 80 80 
+     222   00:8336                          DB $80,$80,$80,$80,$80,$80,$80,$C0
+     222   00:8336  80 80 80 80 80 80 80 C0 
+     223   00:833E                      
+     224   00:833E                          ; sprite 3
+     225   00:833E                          ; patrón 4 del sprite_personaje, del #0c al #0f, mirando abajo
+     226   00:833E                          DB $03,$03,$03,$0F,$0F,$0F,$0F,$0F
+     226   00:833E  03 03 03 0F 0F 0F 0F 0F 
+     227   00:8346                          DB $0F,$07,$04,$04,$04,$04,$04,$0C
+     227   00:8346  0F 07 04 04 04 04 04 0C 
+     228   00:834E                          DB $00,$00,$00,$C0,$C0,$C0,$C0,$C0
+     228   00:834E  00 00 00 C0 C0 C0 C0 C0 
+     229   00:8356                          DB $C0,$80,$80,$80,$80,$80,$80,$C0
+     229   00:8356  C0 80 80 80 80 80 80 C0 
+     230   00:835E                      
+     231   00:835E                      
+     232   00:835E                      ;---Definición de stributos sprite, a esto se le llama plano y cada plano tiene 4 bytes, solo nos caben 32 planos en el espacio de la VRAM
+     233   00:835E                      ;Plano 1
+     234   00:835E                      atributos_personaje_sprite:
+     235   00:835E  64                  atributos_personaje_sprite_posicion_y DB 100
+     236   00:835F  64                  atributos_personaje_sprite_posicion_x DB 100
+     237   00:8360  00                  atributos_personaje_sprite_numero_sprite DB $00
+     238   00:8361  08                  atributos_personaje_sprite_color DB $08 ; aqui se defien el color y el early clock (que es para desparecer el sprite)
+     239   00:8362                      ;lo enaterior es lo m ismo que poner atributos_personaje: DB $64,$64,$00,$08   ,le estamos diciendo en el eje y la posición 0 se vaya al pixel 150 (#64), en el x la posición 0, el número de sprite es el 0 y el último byte el 1000 1000 (1000 para que aparezca) y 1000 (el color rojo)=1000+1000=88 en decimal
+     240   00:8362                      ;otra forma de crear esta definición es atributos_personaje DS 4,0 que creará 4 bytes con valor 0
+     241   00:8362                      
+     242   00:8362                      
+     243   00:8362                      FINAL:
+
+    LABELS
+-------------------------------------------------
+00:0000009F X CHGET
+00:000000A2 X CHPUT
+00:000000D5   GTSTCK
+00:000000D8   GTTRIG
+00:0000005F   CHGMOD
+00:0000005C   LDIRVM
+00:00000059   LDIRMV
+00:0000013E X RDVDP
+00:00000047   WRTVDP
+00:0000008D X GRPPRT
+00:000000C0   BEEP
+00:000000C3 X CLS
+00:00000062   CHGCLR
+00:0000F3E9   FORCLR
+00:00000141 X SNSMAT
+00:0000F3E0   RG15AV
+00:00008200   INICIO
+00:00008200   MAIN
+00:0000820D   inicializar_personaje_principal
+00:0000821E   main_loop
+00:00008227   check_cursors
+00:00008240   check_space_bar
+00:0000824A   make_sound
+00:0000824E   mover_personaje_arriba
+00:0000825C   mover_personaje_abajo
+00:0000826A   mover_personaje_derecha
+00:0000828D   mover_personaje_izquierda
+00:000082B0   poner_pantalla_en_modo_screen_2
+00:000082D1   volcar_sprite_y_atributos_en_VRAM
+00:000082DE   sprites_personaje
+00:0000835E   atributos_personaje_sprite
+00:0000835E X atributos_personaje_sprite_posicion_y
+00:0000835F X atributos_personaje_sprite_posicion_x
+00:00008360 X atributos_personaje_sprite_numero_sprite
+00:00008361 X atributos_personaje_sprite_color
+00:00008362   FINAL
+
+
+ Output: src\main.out
+-------------------------------------------------
+
+ Page: 00
+  Org: 00008200  Size: *  Used: 00000000
+
+    No output
+
+ Output: game.bin
+-------------------------------------------------
+
+ Page: 00
+  Org: 00008200  Size: *  Used: 00000169
+
+   Address   Length Align   Label
+   00008200     361         INICIO

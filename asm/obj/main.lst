@@ -1,0 +1,357 @@
+src/main.asm(65): error: Unrecognized instruction: j
+001   0000                    output "main.bin"   ; debemos de poner esta instrucción o nos generaría un archivo.out, ponle espacios al principio
+002   0000                     
+003   0000             ;Llamadas a rutinas bios
+004   0000             
+005   0000             ;Funciones
+006   0000             CHGET equ #009F    ; Se queda esperando que se pulse una tecla
+007   0000             CHPUT equ #00A2    ; escribe el caracter ascii almacenado en a    
+008   0000             GTSTCK equ #00D5   ; Devuelve el estado del joystick, necesita previamente poner algo en el registro A (0 cursor, 1 puerto joystick 1, 2 puerto joystick 2)                     
+009   0000             GTTRIG equ #00D8   ; Devuelve el estado del botón destinado al disparo, necesita que A se ponga que botón es el que va dispara (0 barra espacio, 1 puerto joystick 1 boton A, etc)
+010   0000             CHGMOD equ #005F   ; Cambia el modo de screen pero previamente necesita que se le asigne el modo en el registro a
+011   0000             LDIRVM equ #005C   ; Tansfiere bloques de la RAM a la VRAM, es la más importante, necesita previamente asignar valor al registro bc con la longitud, dc con la dirección de inicio de la VRAM y hl con la dirección de inicio de la RAM:
+012   0000             RDVDP equ #013E    ; Lee el registro de estado del VDP
+013   0000             WRTVDP equ #0047   ; Escribe en los registros del VDP 
+014   0000             GRPPRT equ 0x008D  ; Pinta un carácter en modo gráfico
+015   0000             BEEP equ #00C0     ; Genera un beep
+016   0000             CLS equ #00C3      ; Borra la pantalla
+017   0000             CHGCLR equ #0062   ; Esta rutina necesita que se acceda 1a las constanes de FORCLR,BAKCLR y BDRCLR con un ld,hl(FORCLR) obtenemos su posición
+018   0000             ;Constantes bios
+019   0000             FORCLR equ 0xF3E9  ; color de tinta (+1=color del fondo, +1 color del borde) 
+020   0000             SNSMAT equ #0141   ; Devuelve un buffer con estado de las teclas de la fila especifixada en el registro A
+021   0000             
+022   0000             
+023   0000             ;Constantes
+024   0000             ;Llamadas direcciones de la ram
+025   0000             RG15AV equ #F3E0 ; alamcena el valor del registro 1 de escritura del VDP, hay unas rutinas de la bios que guardan es entas direcciones valores globals del sistema
+026   0000             
+027   0000             
+028   0000             
+029   0000                 ; https://www.faq.msxnet.org/suffix.html
+030   0000 FE              db   #fe              
+031   0001 00 82           dw   INICIO            
+src/main.asm(32): error: Label not found: FINAL
+032   0003 00 00           dw   FINAL             
+033   0005 00 82           dw   MAIN               
+034   0007                 
+035   0007                 org 33280                 
+036   8200             INICIO: 
+037   8200              
+038   8200             
+039   8200             MAIN:   
+040   8200 CD 16 83        call poner_pantalla_en_modo_screen_2
+041   8203 CD 37 83        call volcar_sprite_y_atributos_en_VRAM
+042   8206 CD 0A 82        call inicializar_personaje_principal
+043   8209                 ;call main_loop
+044   8209             
+045   8209 C9              ret
+046   820A             
+047   820A             
+048   820A             
+049   820A             
+050   820A             inicializar_personaje_principal: 
+051   820A                 ;el entender como fncionan los registros ix del z80 es crucial, lo que hacen es servir de referencia o puntero para las posiciones de moeoria
+052   820A DD 21 D0 83     ld ix, atributos_personaje_sprite ;fijate en mover_persona_derecha,izquieda, arriba y abajo
+053   820E             
+054   820E             main_loop: 
+055   820E 76              halt ; sincroniza el teclado y pantalla con el procesador (que va muy rápido)
+056   820F             
+057   820F                 ;Este sistema de input se queda esperando a que se pulse una tecla
+058   820F                 ;call input_system1
+059   820F                 ;call input_system2
+060   820F             
+061   820F                 ;call check_cursors
+062   820F                 ;call check_space_bar
+063   820F                 
+064   820F                 ;Salto incondicional
+src/main.asm(65): error: Unrecognized instruction: j
+065   820F                 j;r main_loop
+066   820F             
+067   820F             
+068   820F             input_system1: 
+069   820F CD 9F 00        call CHGET ;espera a que se pulse una tecla, cuando se pulsa la almacena en el registro a del z80
+070   8212             
+071   8212 FE 70           cp 'p'
+072   8214 CA E0 82        jp z, mover_personaje_derecha
+073   8217 FE 6F           cp 'o'
+074   8219 CA FB 82        jp z, mover_personaje_izquierda
+075   821C FE 71           cp 'q'
+076   821E CA AA 82        jp z, mover_personaje_arriba
+077   8221 FE 61           cp 'a'
+078   8223 CA C5 82        jp z, mover_personaje_abajo
+079   8226             
+080   8226 C9              ret
+081   8227             
+082   8227             input_system2
+083   8227                 ; comprobamos la tecla pulsada
+084   8227 3E 02       	ld 	a,#02
+085   8229 CD 41 01    	call	SNSMAT
+086   822C CB 77       	bit	6,a	; 'A'
+087   822E CA C5 82    	jp	z, mover_personaje_abajo
+088   8231 CB 7F       	bit	7,a	; 'B'
+089   8233             	;jp	z,******
+090   8233             	
+091   8233             
+092   8233             
+093   8233 3E 03       	ld	a,#03
+094   8235 CD 41 01    	call	SNSMAT
+095   8238 CB 47       	bit	0,a	; 'C'
+096   823A             	;jp	z,******
+097   823A CB 4F           bit	1,a	; 'D'
+098   823C             	;jp	z,******
+099   823C CB 57           bit	2,a	; 'E'
+100   823E             	;jp	z,******
+101   823E CB 5F       	bit	3,a	; 'F'
+102   8240             	;jp	z,******
+103   8240 CB 67       	bit	4,a	; 'G'
+104   8242             	;jp	z,******
+105   8242 CB 6F       	bit	5,a	; 'H'
+106   8244             	;jp	z,******
+107   8244 CB 77       	bit	6,a	; 'I'
+108   8246             	;jp	z,******
+109   8246 CB 7F           bit	7,a	; 'J'
+110   8248             	;jp	z,******
+111   8248             
+112   8248             
+113   8248             
+114   8248 3E 04       	ld	a,#04
+115   824A CD 41 01    	call	SNSMAT
+116   824D CB 47           bit	0,a	; 'K'
+117   824F             	;jp	z,******
+118   824F CB 4F           bit	1,a	; 'L'
+119   8251             	;jp	z,******
+120   8251 CB 57           bit	2,a	; 'M'
+121   8253             	;jp	z,******
+122   8253 CB 5F       	bit	3,a	; 'N'
+123   8255             	;jp	z,******
+124   8255 CB 67           bit	4,a	; 'O'
+125   8257 CA FB 82    	jp	z, mover_personaje_izquierda
+126   825A CB 6F           bit	5,a	; 'P'
+127   825C CA E0 82    	jp	z, mover_personaje_derecha
+128   825F CB 77           bit	6,a	; 'Q'
+129   8261 CA AA 82    	jp	z, mover_personaje_arriba
+130   8264 CB 7F       	bit	7,a	; 'R'
+131   8266             	;jp	z,******
+132   8266             
+133   8266             
+134   8266             
+135   8266             
+136   8266 3E 05       	ld	a,#05
+137   8268 CD 41 01    	call	SNSMAT
+138   826B CB 47       	bit	0,a	; 'S'
+139   826D             	;jp	z,******
+140   826D CB 4F           bit	1,a	; 'T'
+141   826F             	;jp	z,******
+142   826F CB 57           bit	2,a	; 'U'
+143   8271             	;jp	z,******
+144   8271 CB 5F       	bit	3,a	; 'V'
+145   8273             	;jp	z,******
+146   8273 CB 67           bit	4,a	; 'W'
+147   8275             	;jp	z,******
+148   8275 CB 6F       	bit	5,a	; 'X'
+149   8277             	;jp	z,******
+150   8277 CB 77           bit	6,a	; 'Y'
+151   8279             	;jp	z,******
+152   8279 CB 7F       	bit	7,a	; 'Z'
+153   827B             	;jp	z,******
+154   827B             
+155   827B             
+156   827B             	
+157   827B 3E 06       	ld	a,#06
+158   827D CD 41 01    	call	SNSMAT
+159   8280 CB 47       	bit	0,a	; 'SHIFT'
+160   8282             	;jp	z,******
+161   8282             	
+162   8282             
+163   8282 C9              ret
+164   8283             
+165   8283             check_cursors: 
+166   8283 AF              xor a
+167   8284 CD D5 00        call GTSTCK
+168   8287 FE 03           cp 3
+169   8289 CA E0 82        jp z, mover_personaje_derecha
+170   828C FE 07           cp 7
+171   828E CA FB 82        jp z, mover_personaje_izquierda
+172   8291 FE 01           cp 1
+173   8293 CA AA 82        jp z, mover_personaje_arriba
+174   8296 FE 05           cp 5
+175   8298 CA C5 82        jp z, mover_personaje_abajo
+176   829B             
+177   829B C9              ret
+178   829C             
+179   829C             check_space_bar: 
+180   829C                 ;Ponemos a 0 el registro a que lo necesita GTTRIG para indicarle que vamos a trabajar con la barra espciadora
+181   829C AF              xor a
+182   829D CD D8 00        call GTTRIG
+183   82A0                 ;GTTRIG devuelve 255 si está presionada y 0 sino lo está
+184   82A0 FE FF           cp 255
+185   82A2 CA A6 82        jp z, make_sound
+186   82A5                
+187   82A5 C9              ret
+188   82A6             make_sound: 
+189   82A6 CD C0 00        call BEEP
+190   82A9 C9              ret
+191   82AA             
+192   82AA             
+193   82AA             
+194   82AA             mover_personaje_arriba: 
+195   82AA DD 7E 00        ld a,(ix); obetenemos el valor actual de la posicion y
+196   82AD D6 02           sub 2 ; incrementamos en 3 el valor
+197   82AF             
+198   82AF                 ;Chequeamos que no se salga por arriba
+199   82AF FE 00           cp 0
+200   82B1                 ;salto condicional, comprobamos si el bit 6 edl registro F (el de las banderas) está a 1
+201   82B1                 ; si es 1 saltamos al main_loop
+202   82B1 CA 0E 82        jp z, main_loop
+203   82B4                 
+204   82B4 DD 77 00        ld (ix), a ; se lo metemos al atributo
+205   82B7 DD 36 02 00     ld (ix+2),#00;ponemos al patrón 1
+206   82BB DD 36 03 08     ld (ix+3),#08;le ponemos el color rojo
+207   82BF CD 37 83        call volcar_sprite_y_atributos_en_VRAM
+208   82C2 CD 0E 82        call main_loop
+209   82C5             mover_personaje_abajo: 
+210   82C5 DD 7E 00        ld a,(ix); obetenemos el valor actual de la posicion y
+211   82C8 C6 02           add 2 ; incrementamos en 3 el valor
+212   82CA             
+213   82CA                 ;Chequeamos que no se salga por abajo
+214   82CA FE B0           cp 192-16
+215   82CC CA 0E 82        jp z, main_loop
+216   82CF             
+217   82CF DD 77 00        ld (ix), a ; se lo metemos al atributo
+218   82D2 DD 36 02 0C     ld (ix+2),#0c;le cambiamos al patrón 4 (12 en headecimal)
+219   82D6 DD 36 03 02     ld (ix+3),#02; le ponemos el color verde
+220   82DA CD 37 83        call volcar_sprite_y_atributos_en_VRAM
+221   82DD CD 0E 82        call main_loop
+222   82E0             mover_personaje_derecha: 
+223   82E0 DD 7E 01        ld a,(ix+1); obetenemos el valor actual de la posicion x
+224   82E3 C6 02           add 2; incrementamos en 3 el valor
+225   82E5             
+226   82E5                 ;Chequeamos que no se salga por la derecha
+227   82E5 FE F0           cp 256-16
+228   82E7 CA 0E 82        jp z, main_loop
+229   82EA                 
+230   82EA             
+231   82EA DD 77 01        ld (ix+1), a ; se lo metemos al atributo
+232   82ED DD 36 02 08     ld (ix+2),#08 ;le asignamos el patrón 2
+233   82F1 DD 36 03 07     ld (ix+3),#07; le cambiamos el color azul claro
+234   82F5 CD 37 83        call volcar_sprite_y_atributos_en_VRAM
+235   82F8 CD 0E 82        call main_loop
+236   82FB             mover_personaje_izquierda: 
+237   82FB DD 7E 01        ld a,(ix+1); obetenemos el valor actual de la posicion x
+238   82FE D6 02           sub 2 ; incrementamos en 3 el valor
+239   8300             
+240   8300                 ;Chequeamos que no se salga por la izquierda
+241   8300 FE 00           cp 0
+242   8302 CA 0E 82        jp z, main_loop
+243   8305             
+244   8305 DD 77 01        ld (ix+1), a ; se lo metemos al atributo
+245   8308 DD 36 02 04     ld (ix+2),#04;le cambiamos el patrón 3
+246   830C DD 36 03 0B     ld (ix+3),#0B; le ponemos el color amarillo
+247   8310 CD 37 83        call volcar_sprite_y_atributos_en_VRAM
+248   8313 CD 0E 82        call main_loop
+249   8316             
+250   8316             
+251   8316             
+252   8316             poner_pantalla_en_modo_screen_2: 
+253   8316                  ;Cambiamos el modo de pantalla
+254   8316 3E 02           ld  a,2     ; La rutina CHGMOD nos obliga a poner en el registro a el modo de pantalla que queremos
+255   8318 CD 5F 00        call CHGMOD ; Mira arriba, pone la explicación
+256   831B             
+257   831B 3A E0 F3        ld a,(RG15AV) ; esta direcciónd e memoria alamcena el valor el registro de lectura del VDP, mira arriba
+258   831E                 ;En or 0+0=0, 0+1=1, 1+1=1
+259   831E                 ;En and 0+0=0, 0+1=0, 1+1=1
+260   831E                 ;Con eso queremos cambiar los bits 7 y 8 del registro de escritura 1 del z80, queremos poner el 7 a 1 y también el 8 a 1
+261   831E                 ;el bit 7 del registro 1 pone los sprites en modo 16x16 (los que nostros queremos dibujar)
+262   831E                 ;el bit 8 queremos desactivarlo para no utilizar los sprites agrandados
+263   831E F6 02           or 00000010b ; con or poniendo un 0 siempre respetamos los bits que hay y poniendo 1 1 obligamos a que sea 1
+264   8320 E6 FE           and 11111110b ; con and obligamos a que el ultimo bit valga 0
+265   8322             
+266   8322 47              ld b,a ;carga en b el valor de a
+267   8323 0E 01           ld c,1 ; La rutina WRTVDP necesta que le carguemos previamente el entero en C del z80 del registro que queroms modificar
+268   8325 CD 47 00        call WRTVDP ;Escribe en los registros del VDP 
+269   8328             
+270   8328                 ;Ponemos los colores de:
+271   8328 21 E9 F3        ld      hl,FORCLR
+272   832B 36 0F       	ld      [hl],15; le poneos el 15 en tinta que es el blanco
+273   832D 23          	inc     hl
+274   832E 36 01       	ld      [hl],1 ; le metemos 1 en fondo que es el negro
+275   8330 23          	inc		hl
+276   8331 36 06       	ld		[hl],6 ;en borde también el negro
+277   8333 CD 62 00    	call    CHGCLR
+278   8336 C9              ret
+279   8337             
+280   8337             volcar_sprite_y_atributos_en_VRAM: 
+281   8337             ;por favor antes de nada mira este dibujo: https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png
+282   8337             ;-----------------------------Definición del sprite en #3800  y volcado a la VRAM-------------------------------------------
+283   8337             
+284   8337 21 50 83        ld hl, sprites_personaje ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 03800 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+285   833A 11 00 38        ld de, #3800; la rutina necesita haber cmakargado previamente con de la dirección de inicio de la VRAM          
+286   833D 01 80 00        ld bc, 8*4*4; 8 byte de cada tile * 4 que son los sprites de 16x16 y * 4 que son los sprites o planos que forman el sprite
+287   8340 CD 5C 00        call  LDIRVM ; Mira arriba, pone la explicación
+288   8343             
+289   8343             ;-----------------------------Definición de los atributos en #1b00 y volcado a la VRAM------------------------------------
+290   8343             
+291   8343 21 D0 83        ld hl, atributos_personaje_sprite ; la rutina LDIRVM necesita haber cargado previamente la dirección de inicio de la RAM, para saber porqué he puesto 0000 fíjate este dibujo https://sites.google.com/site/multivac7/files-images/TMS9918_VRAMmap_G2_300dpi.png ,así es como está formado el VDP en screen 2
+292   8346 11 00 1B        ld de, #1b00; la rutina necesita haber cargado previamente con de la dirección de inicio de la VRAM          
+293   8349 01 04 00        ld bc,4; solo tenemos 1 plano de un personaje
+294   834C CD 5C 00        call  LDIRVM ; Mira arriba, pone la explicación
+295   834F             
+296   834F C9              ret
+297   8350             ;para una expresión hexadecimal se puede utilizar tambiénm el sign $ mirar http://www.xl2s.tk/sjasmman4.html
+298   8350             ;Definición de sprite 4 tiles
+299   8350             
+300   8350             sprites_personaje: 
+301   8350                 ; sprite 1
+302   8350                 ; patrón 1 del sprite_personaje, del @00 al #04 mirando arriba
+303   8350                 DB $03,$03,$03,$1F,$17,$17,$17,$17
+303   8350 0303031F17171717
+304   8358                 DB $17,$07,$04,$04,$04,$04,$04,$0C
+304   8358 170704040404040C
+305   8360                 DB $00,$00,$00,$E0,$A0,$A0,$A0,$A0
+305   8360 000000E0A0A0A0A0
+306   8368                 DB $A0,$80,$80,$80,$80,$80,$80,$C0
+306   8368 A0808080808080C0
+307   8370             
+308   8370                 ; sprite 2
+309   8370                 ; patrón 2 del sprite_personaje, del #04 al #07, mirando hacia la izquierda
+310   8370                 DB $01,$03,$01,$03,$03,$03,$03,$03
+310   8370 0103010303030303
+311   8378                 DB $03,$03,$02,$02,$02,$02,$02,$07
+311   8378 0303020202020207
+312   8380                 DB $80,$80,$80,$C0,$C0,$C0,$C0,$C0
+312   8380 808080C0C0C0C0C0
+313   8388                 DB $C0,$80,$80,$80,$80,$80,$80,$80
+313   8388 C080808080808080
+314   8390             
+315   8390                 ; sprite 3
+316   8390                 ; patrón 3 del sprite_personaje, del #08 al # #0b, mirando hacia la derecha
+317   8390                 DB $03,$03,$03,$07,$07,$07,$07,$07
+317   8390 0303030707070707
+318   8398                 DB $07,$03,$02,$02,$02,$02,$02,$03
+318   8398 0703020202020203
+319   83A0                 DB $00,$80,$00,$80,$80,$80,$80,$80
+319   83A0 0080008080808080
+320   83A8                 DB $80,$80,$80,$80,$80,$80,$80,$C0
+320   83A8 80808080808080C0
+321   83B0             
+322   83B0                 ; sprite 3
+323   83B0                 ; patrón 4 del sprite_personaje, del #0c al #0f, mirando abajo
+324   83B0                 DB $03,$03,$03,$0F,$0F,$0F,$0F,$0F
+324   83B0 0303030F0F0F0F0F
+325   83B8                 DB $0F,$07,$04,$04,$04,$04,$04,$0C
+325   83B8 0F0704040404040C
+326   83C0                 DB $00,$00,$00,$C0,$C0,$C0,$C0,$C0
+326   83C0 000000C0C0C0C0C0
+327   83C8                 DB $C0,$80,$80,$80,$80,$80,$80,$C0
+327   83C8 C0808080808080C0
+328   83D0             
+329   83D0             
+330   83D0             ;---Definición de stributos sprite, a esto se le llama plano y cada plano tiene 4 bytes, solo nos caben 32 planos en el espacio de la VRAM
+331   83D0             ;Plano 1
+332   83D0             atributos_personaje_sprite: 
+333   83D0 64          atributos_personaje_sprite_posicion_y DB $64
+334   83D1 64          atributos_personaje_sprite_posicion_x DB $64
+335   83D2 03          atributos_personaje_sprite_numero_sprite DB $03
+336   83D3 08          atributos_personaje_sprite_color DB $08 ; aqui se defien el color y el early clock (que es para desparecer el sprite)
+337   83D4             ;lo enaterior es lo m ismo que poner atributos_personaje: DB $64,$64,$00,$08   ,le estamos diciendo en el eje y la posición 0 se vaya al pixel 150 (#64), en el x la posición 0, el número de sprite es el 0 y el último byte el 1000 1000 (1000 para que aparezca) y 1000 (el color rojo)=1000+1000=88 en decimal
+338   83D4             ;otra forma de crear esta definición es atributos_personaje DS 4,0 que creará 4 bytes con valor 0

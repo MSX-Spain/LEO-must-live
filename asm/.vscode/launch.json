@@ -1,0 +1,36 @@
+{
+    //https://github.com/S0urceror/DeZog/releases
+    //code --install-extension dezog-1.3.5.vsix
+    //Complemento vscode DeZog
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "dezog",
+            "request": "launch",
+            "name": "Debug OpenMSX",
+            "remoteType": "openmsx",
+            "listFiles": [
+                {
+                    "path": "obj/main.lst",
+                    "useFiles": true,
+                    //"asm": "tools\\sjasmplus\\windows\\sjasmplus.exe",
+                    "asm": "sjasmplus",
+                    "mainFile": "src/main.asm",
+                    //"pcInSlot": "3 2 3",
+                    // Previous Glass release: 
+                    // "filter": "/^(?<address>[0-9A-F]{4})\\s(?<bytes>(?:(?:[0-9a-f]{2})\\s|\\s){4})(?<mnemonics>.*)//"
+                    
+                    // Current Glass release 20-7-2020
+                    "filter": "/^(?<address>[0-9A-F]{4})\\s(?<bytes>(?:(?:[0-9a-f]{2})\\s|\\s{2}\\s){4,})\t(?<mnemonics>.*)//"
+                }
+            ],
+            "startAutomatically": false,
+            "commandsAfterLaunch": [
+                "-assert enable" // start with ASSERT mode ON
+            ],
+            "resetOnLaunch": false,
+            "rootFolder": "${workspaceFolder}",
+            "tmpDir": ".tmp"
+        }
+    ]
+}
