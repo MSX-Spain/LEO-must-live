@@ -11,9 +11,11 @@
 60 me$="^Loading sprites":gosub 2000
 1 'cargamos los sprites en VRAM'
 70 gosub 9000
+75 gosub 19000
 80 me$="^Loading tileset":gosub 2000
 1 'Cargamos los tiles'
 90 gosub 10000
+
 
 
 1 'Vamos a pintar algo'
@@ -26,44 +28,66 @@
 
  
 1 '' ******************************
-1 '' Program:  SAM must live
-1 '' autor:    MSX spain
+1 '' Program:    Leo must live
+1 '' Autor:      MSX spain
+1 '' Repository: https://github.com/MSX-Spain/LEO-must-live
 1 '' ******************************
+
 1 '***************
 1 '****Variables**
 1 '***************
 
 1 '****Variables del juego*****'
 1 'm()=mapa, se utiliza como buffer para almacenar los datas y hacer un pintado y detector de colisión rápido'
+1 'md=mapa direction, dirección en la memoria vram'
+1 'mp$, r$, tn$, tn, re=variables solo utilizadas en imprimir pantalla para el manejo de strings '
+1 'r, c=row and column for bucle help, solo utilizadas en imprimir pantalla'
+1 'f=file, indica a la subrrutina pintar pantalla (20200) por que fila debe de empezar a pintar, terminará de pintar en f+8'
 1 'sc=fase o screen'
 1 'sl=screen limit, cuando lleguemos a screen lmit mostraremos el mensaje de juego completado y volveremos al principio'
 1 'me$=mensaje'
 1 'mc=counter map, para ir pintando el mapa con los tiles'
-1 'ml=limit map, el ancho del mapa, cuando lleguemos a mlel mapa no se repintará'
-
+1 'ml=limit map, el ancho del mapa, cuando lleguemos al final mapa no se repintará'
+1 's$=puntuación en string, solo aparece en la subrrutina impimir HUD'
+1 'ls=lengh score=para ver la cantidad de caractéres y así poder imprimir los tiles de la puntuación, solo parace en imprimir HUD'
 
 1 'ts=solid tile, tile a partir que está el suelo'
-1 'td=dead tile, tile que te matan'
+1 'td()=dead tiles, tiles que te matan'
+1 'tm=tile money, monedas que se pueden cocger para ganar puntos'
+1 'tf=tile floor, camino por donde debe ir el player'
 1 't3,t5,t7=tile derecha, tile abajo y tile izquierda'
 
 1 'x, y=player coordinates
 1 'v=velocidad horizontal'
-1 'o=old y position'
-1 'a=player está saltando'
+1 'h=velocidad vertical
+1 'l=lives, vidas
+1 's=score, puntuación, irá aumentando según vayas cogiendo monedas'
 1 'p,p0,p1,p2,p3=sprite asignado que irá cambiando con los valores de p0 a p3'
-
-1 'mp=mapa direction'
-1 'dat=datos, usada para el restore de los datas'
-1 'r, c=row and column for bucle'
+1 'px y py=solo aparece en las líneas 420 y 440 para hacer cálculos del tile que ocupa el player en la pantalla'
 
 1 '****************
 1 '***Subrrutinas**
 1 '****************
-1 ' 9000 Rutina cargar sprites en VRAM con datas basic''
+
+1 ' 9000-9990 Rutina cargar sprites en VRAM con datas basic''
+1 ' 10000-18990 Rutina cargar la definición y colores de tiles en screen 2'
+1 ' 19000-19090 Rutina borrar pantalla'
+1 ' 200 -500 Main loop'
+    1 'Captura de teclado y actualización player'
+    1 'Chequeo de colisiones'
+    1 'Render'
+    1 'Chequeo del juego'
+1 ' 2000-2090 Imprimir mensajes sin pausa''
+1 ' 2100-2190 Imprimir mensajes con pausa (necesita que esté inicializada me$)''
+1 ' 2200-2290 Imprimir HUD'
+1 ' 3000-3090 Player muere''
+1 ' 20000-20090 Rutina cambio de nivel o pantalla'
+1 ' 20200-20330 Cargar array con compresión RLE-16'
+1 ' 21000-21090 Pintar pantalla, ponemos en la tabla nombres los tiles'
 
 100 dim m(120,16):dim td(2)
-110 f=0:sc=1:sl=4:ts=0:td(0)=35:td(1)=33:te=64:mc=0:ml=88:ca=1
-120 x=0:y=9*8:v=8:h=8:l=5:P=0:P0=0:P1=1:P2=2:P3=3:P4=4:P5=5
+110 f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=4:tf=32:mc=0:ml=88
+120 x=0:y=9*8:v=8:h=8:l=10:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'inicializamos el array con el mapa de tiles, importante colocar el puntero de los datas al principio'
 130 restore 22000: gosub 20200
 1 'Mostramos la pantalla de bienvenida'
@@ -79,105 +103,137 @@
 163 VPOKE 6690,0
 1 'Pintamos la casa que indica la pantalla en la que estamos'
 164 VPOKE 6696,5
-165 for i=0 to 31: vpoke 6784+i,64:next i 
-166 gosub 2200
+1 'Pintamos el signo de puntuación para los puntos de las mnedas cogidas'
+165 VPOKE 6702,7
+166 for i=0 to 31: vpoke 6784+i,64:next i 
+1 'Pintamos el marcador'
+167 gosub 2200
+1 'Pintamos al player'
+168 put sprite 0,(x,y),4,p
 
 
-200 'if ca=0 then goto 400
-    205 s=STICK(0)ORSTICK(1)
+1 'Main loop'
+    200 j=STICK(0) OR STICK(1)
     1 ' on variable goto numero_linea1, numero_linea2,etc salta a la linea 1,2,etc o si es cero continua la ejecución '
-    210 ON s GOTO 230,250,270,290,310,330,350,370
+    210 ON j GOTO 230,250,270,290,310,330,350,370
     220 p=p0:swap p0,p1:goto 400
     1 'movimiento hacia arriba 
-    230 y=y-h
     1 'Ponemos el sprite correspondiente que mira hacia arriba que irá alternando ente 2 sprites'
-    240 p=p4:swap p4,p5:goto 400
+    230 y=y-h:p=p4:swap p4,p5:goto 400
     1 '2 Pulsado 2 movimiento hacia arriba derecha 
-    250 x=x+v:y=y-h
     1 ' ponemos el sprite 0 o 1 que corresponde a los de la derecha'
-    260 P=P0:swap P0,P1:goto 400
+    250 x=x+v:y=y-h:p=p0:swap p0,p1:goto 400
     1 '3 pulsado Movimiento hacia la derecha '
-    270 x=x+v
-    280 P=P0:swap P0,P1:goto 400
+    270 x=x+v:p=p0:swap p0,p1:goto 400
     1 '4 Movimiento abajo derecha'
-    290 x=x+v:y=y+h
-    300 P=P0:swap P0,P1:goto 400
+    290 x=x+v:y=y+h:p=p0:swap p0,p1:goto 400
     1 '5 Movimiento abajo'
-    310 y=y+h
-    320 P=P4:swap P4,P5:goto 400
+    310 y=y+h:p=p4:swap p4,p5:goto 400
     1 '6 Movimiento abajo izquierda'
-    330 x=x-v-4:y=y+h
-    340 P=P2:swap P2,P3:goto 400
+    330 x=x-v-4:y=y+h:p=p2:swap p2,p3:goto 400
     1 '7 Movimiento izquierd'
-    350 x=x-v-4:y=y-h
-    360 P=P2:swap P2,P3:goto 400
+    350 x=x-v-4:y=y-h:p=p2:swap p2,p3:goto 400
     1 '8 movimiento arriba izquierda'
-    370 x=x-v-4:y=y-h
-    380 P=P2:swap P2,P3
+    370 x=x-v-4:y=y-h:p=p2:swap p2,p3
 
 
     
-    1 'Chekeo de límites y render'
+    1 'Chekeo de límites'
     400 IF Y<40 THEN Y=40 else if y>120 then y=120
-    420 if x<0 then x=0 else if x>250 then x=250
-    430 PUTSPRITE0,(X,Y),4,P
+    410 if x<0 then x=0 else if x>250 then x=250
 
     1 'Colisiones con el mapa'
-    460 px=x/8:py=y/8
-    470 t3=m(px+1+mc,py+1)
-    1 'Se se tropieza con un tile de la muerte entonces llamaos a la subrrutina player muere (3000)'
-    475 'if t3=td then gosub 3000
-    475 if t3=td(0) or t3=td(1) then beep
+    420 px=x/8:py=y/8
+    430 t3=m(px+1+mc,py+1)
+    1 'Se se tropieza con un tile de la muerte entonces:
+        1 'llamamos a la subrrutina player muere (3000)'
+    1 'Si no si el tile es un Tile Money(tm) entonces'
+        1 'Hacemos un sonido'
+        1 'actualizamos el array con los cabios'
+        1 'aumentamos el sc=score'
+        1 'actualizmos el marcador (2200)'
+    1 '440 if t3=td(0) or t3=td(1) then beep else if t3=tm then beep:m(px+1+mc,py+1)=tf:s=s+10:gosub 2200
+    440 if t3=td(0) or t3=td(1) then gosub 3000 else if t3=tm then beep:m(px+1+mc,py+1)=tf:s=s+10:gosub 2200
 
-    476 if sc=sl then me$="Congratulations, final":gosub 2100:goto 110
-    1 ' si estamos en el final del scroll y la posición del player es mayor de 240:1.Mostramos un mensaje(2000),2.cargamos los nuevos datas en el array(20200),3.actualizamos el HUD(2200)'
-    477 if mc=ml and x>240 then sc=sc+1:mc=0:x=0:y=9*8:PUT SPRITE0,(0,212),4,0:me$="^Loading next level...":gosub 2000:gosub 20200:gosub 2200:f=7:gosub 21000:me$="Press space key":gosub 2100
+    1 'Render'
+    450 PUTSPRITE0,(X,Y),4,P
+    1 '450 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
+     
+    1 'Si estamos en el final ralentizamos a LEO'
+    460 if mc=ml then for i=0 to 100:next i
+    1 ' si estamos en el final del scroll y la posición del player es mayor de 240 llamamos a la subrrutina de cambiar pantalla (20000)
+    470 if mc=ml and x>240 then gosub 20000
    
     1 'moviendo el tercio superior'
     480 if mc mod 10=0 and mc<ml then f=0:gosub 21000
     1 'moviendo el tercio central'
     485 if mc<ml then f=7:gosub 21000
     486 'me$=str$(mc):gosub 2000
-
 500 goto 200
 
 1 'imprimir mensajes sin pausa'
     2000 line(0,170)-(255,180),6,bf
     2010 preset (0,170):print #1,me$
 2090 return
+
 1 'Imprimir mensajes con pausa (necesita que esté inicializada me$)'
     2100 line(0,170)-(255,180),6,bf
     2110 preset (0,170):print #1,me$
     2120 if strig(0)=-1 then 2180 else 2120
     2180 line(0,170)-(255,180),6,bf
 2190 return
+
 1 'Imprimir HUD'
     1 ' par acomprender los pokes mira las lines 140-160 y el final del archivo utils.bas'
     2200 vpoke 6722,22+l
     2230 vpoke 6728,22+sc
-    1 '2200 line(0,150)-(255,160),1,bf
-    1 '1 'Pantalla'
-    1 '2230 preset (50,150):print #1,f
-    1 '1 'vidas'
-    1 '2240 preset (16,150):print #1,l
+    2240 s$=str$(s)
+    2250 ls=len(s$)
+    2260 for i=1 to ls-1
+        2270 vpoke 6733+i,22+val(mid$(s$,i+1,1))
+    2280 next i
 2290 return
 
 
 3000 'player muere'
     3010 beep
+    1 '2200: imprimir HUD'
     3020 mc=0:l=l-1:gosub 2200
-    3030 x=0:y=9*8:f=7:gosub 21000
-    3040 PUT SPRITE0,(X,Y),4,0
+    1 'sacamos a leo de la pantalla'
+    1 '19000 borrar pantalla'
+    1 '2100: mmostrar mensaje con pausa '
+    3030 if l<=0 then put sprite 0,(0,212),4,p:gosub 19000:me$="^Game over":gosub 2100:goto 110
+    3040 x=0:y=9*8:f=7:gosub 21000
+    3050 PUT SPRITE0,(X,Y),4,0
     1 'actualizamos el HUD'
-    3050 gosub 2200
+    3060 gosub 2200
     1 'Mostramos el mensaje con la pausa'
-    3060 me$="^Ready press space":gosub 2100
+    3070 me$="^Ready press space":gosub 2100
 3090 return
 
+1 'Rutina cambio de nivel o pantalla'
+    20000 sc=sc+1:mc=0
+    20010 PUT SPRITE0,(0,212),4,0
+    1 '19000: rutina borrar pantalla'
+    1 'Si hemos llegado al final del juego mostramos un mensaje y reiniciamos'
+    20020 if sc=sl then gosub 19000:me$="^Congratulations, final":gosub 2100:goto 110
+    1 'Mostramos un mensaje sin pausa'
+    20030 me$="^Loading next level...":gosub 2000
+    1 'Volvemos a cargar el array con los nuevos datas'
+    20040 gosub 20200
+    1 'Pintamos la parte de arriba de la pantalla'
+    20050 f=0:gosub 21000
+    1 'Pintamos la parte central de la pantalla'
+    20060 f=7:gosub 21000
+    1 'Imprimimos el marcador'
+    20070 gosub 2200
+    1 'Reiniciamos y pintamos al player'
+    20075 x=0:y=9*8:put sprite 0,(x,y),4,p
+    1 'Mostramos un mensaje con pausa'
+    20080 me$="^Press space key":gosub 2100
+20090 return
 
-
-
-1 'Compresión RLE-16'
+1 'Cargar array con compresión RLE-16'
     20200 call turbo on (m())
     20205 for r=0 to 15
         20210 READ mp$:po=0
@@ -195,7 +251,7 @@
     20325 call turbo off
 20330 return
 
-1 'ponemos en la tabla nombres los tiles
+1 ' Pintar pantalla, ponemos en la tabla nombres los tiles
     21000 _TURBO ON (m(),mc,f)
     21002 mc=mc+1
     21005 md=6144+(32*f)
@@ -220,13 +276,14 @@
 22060 data 7725
 22070 data 1f240b210005022101240821000505210424012100050a21022406210e240921
 22080 data 06240721000504210024032105240f2101240f2104240d2102240321000501210e240921
-22090 data 06240d210024032105240f2101240321012403210a240521022404210224062100240c2100240421040a
-22100 data 0b2109240321072404210a24032101240d210224032102240b2103240c21002404210424
-22110 data 0b2103240921002411210024072101240d210224032102240b2103240c2100240421040a
-22120 data 062404210324092100241121002407210124032105240321022403210b240221032402210a2404210424
-22130 data 062404210324092100240c210524032105240321052410210124062103241221040a
-22140 data 06240c210124072104240e2105240821002410210124002100051b210424
+22090 data 06240d210024032105240f2101240321012403210a240521022404210224062100240c21002404210424
+22100 data 0b2109240321072404210a24032101240d210224032102240b2103240c2100240421040a
+22110 data 0b2103240921002411210024072101240d210224032102240b2103240c21002404210424
+22120 data 062404210324092100241121002407210124032105240321022403210b240221032402210a240421040a
+22130 data 062404210324092100240c2105240321052403210524102101240621032412210424
+22140 data 06240c210124072104240e2105240821002410210124002100051b21040a
 22150 data 06240c210124072104240e2105240021000506210024102101240d211424
+
 
 
 
@@ -240,13 +297,14 @@
 22260 data 6d260922
 22270 data 0b221c210222142101221b2106221121
 22280 data 0022000609221c2102221421012203211322032103221421
-22290 data 0b22052103220321112202210b220521012213210322032103220a21090a
-22300 data 0a21002207210122032101220b2101220e2101220321052211210322032103220a21090a
-22310 data 0a21032204210122032101220b2101220e210122032105220221052203210822042102220221092205210122
-22320 data 072202210322042101221121012203210c22032105220221052203210a22022102220221092205210122
-22340 data 07220b21012208210a220a210122152100220c21012216210322
-22350 data 07220b2101221e210122152100220c21012216210322
-22360 data 07220b2101221e210122152100220c21012216210322
+22290 data 0b22052103220321112202210b220521012213210322032103220a210922
+22300 data 0a21002207210122032101220b2101220e2101220321052211210322032103220a210322050a
+22310 data 0a21032204210122032101220b2101220e2101220321052202210522032108220421022202211122
+22320 data 072202210322042101221121012203210c22032105220221052203210a220221022202210b22050a
+22340 data 07220b21012208210a220a210122152100220c21012213210622
+22350 data 07220b2101221e210122152100220c21012213210022050a
+22360 data 07220b2101221e210122152100220c21012213210622
+
 
 
 
@@ -259,15 +317,17 @@
 22440 data 0148012105480321054806210448072101480123024801210348052104480621044810210c48072104480021
 22450 data 7721
 22460 data 7724
-22470 data 04240a210124092103240d210124142104240d2107240b21002409210024
-22480 data 04240a210124092103240d21012414210424132101240b21002409210024
-22490 data 072104240221012402210124042103240421052403210024022102240e2104240221062409210224022108240221022403210024
-22500 data 0721042402210124022101240b2104240621002402210224052101240221082402210d240221022402210124042100240221032402210124
-22510 data 07210924022101240b21002402210024052101240221052402210124092101240f2100240221022402210124042100240221032402210124
-22520 data 0424022104240721012402210924022100240f21002402210124092101240f21002408210124002104240221032402210124
+22470 data 04240a210124092103240d210124142104240d2107240b21002404210124030a
+22480 data 04240a210124092103240d21012414210424132101240b21002405210424
+22490 data 072104240221012402210124042103240421052403210024022102240e21042402210624092102240221082406210024020a
+22500 data 0721042402210124022101240b2104240621002402210224052101240221082402210d240221022402210124042100240221002404210224
+22510 data 07210924022101240b21002402210024052101240221052402210124092101240f2100240221022402210124042100240221012404210024000a
+22520 data 0424022104240721012402210924022100240f21002402210124092101240f21002408210124002104240221022403210124
 22540 data 0424022104240721012402210924022104240b210024022105240321032402210124042106240d2102240321022402210124
 22550 data 04240a210624132100240b210024022101240e2101240a210024142100240621
 22560 data 04240a21062413210d24022101240e2101240a210024022102240e2100240621
+
+
 
 1 'Level 4
 22600 data 1b230125022300250623012515230125002306250e23002500230125012303251323
@@ -378,7 +438,7 @@
     9020 for i=0 to (32*6)-1
         9030 read b:vpoke 14336+i,b
     9040 next i
-    9050 'call turbo off
+    9050 call turbo off
 
     9360 data 0,0,0,0,33,195,192,192
     9370 data 192,63,63,62,96,160,240,240
@@ -409,18 +469,11 @@
     9600 data 19,15,15,15,15,12,16,0
     9610 data 0,0,192,224,240,192,128,128
     9620 data 144,224,224,224,224,192,32,0
-    9980 call turbo off
+  
 9990 return 
 
-1 'En screen 2'
+1 'Rutina cargar la definición y colores de tiles en screen 2'
     10000 call turbo on
-    1 'Ponemos que en la parte del mapa solo se vea el ultimo tile, dejamos el 3 tercio sin tocar para el marcador
-    1 'en realidad la tabla de nombres son 768 bytes'
-    10005 FOR t=6144 TO (6144+768)-97
-        10010 vpoke t,255
-    10020 next t
-
-
     1' Hay que recordar la estructura de la VRAM, el tilemap se divide en 3 zonas
     1 'Nuestro tileset son X tiles o de 0 hasta el X-1'
     1 'Definiremos a partir de la posición 0 de la VRAM 18 tiles de 8 bytes'
@@ -525,7 +578,7 @@
         13030 VPOKE 10240+I,VAL("&H"+A$): '&h2800'
         13040 VPOKE 12288+I,VAL("&H"+A$): ' &h3000'
     13050 NEXT I
-
+    13060 call turbo off
 
     
     17740 DATA 81,F8,F8,81,81,81,81,81
@@ -608,25 +661,15 @@
     18510 DATA 11,11,11,11,11,11,11,11
     18520 DATA 11,11,11,11,11,11,11,11
     18530 DATA 11,11,11,11,11,11,11,11
+18990 return
 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    19000 call turbo off
-19990 return
-
-
+1 'Rutina borrar pantalla'
+1 'Ponemos que en la parte del mapa solo se vea el ultimo tile, dejamos el 3 tercio sin tocar para el marcador
+1 'en realidad la tabla de nombres son 768 bytes'
+    19000 FOR t=6144 TO (6144+768)-97
+        19010 vpoke t,255
+    19020 next t
+19090 return
 
 
 1 '14336 / h3800 -> 16383 / 3fff

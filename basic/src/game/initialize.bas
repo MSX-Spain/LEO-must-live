@@ -11,9 +11,11 @@
 60 me$="^Loading sprites":gosub 2000
 1 'cargamos los sprites en VRAM'
 70 gosub 9000
+75 gosub 19000
 80 me$="^Loading tileset":gosub 2000
 1 'Cargamos los tiles'
 90 gosub 10000
+
 
 
 1 'Vamos a pintar algo'

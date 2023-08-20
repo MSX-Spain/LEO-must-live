@@ -14,7 +14,7 @@
     9020 for i=0 to (32*6)-1
         9030 read b:vpoke 14336+i,b
     9040 next i
-    9050 'call turbo off
+    9050 call turbo off
 
     9360 data 0,0,0,0,33,195,192,192
     9370 data 192,63,63,62,96,160,240,240
@@ -45,18 +45,11 @@
     9600 data 19,15,15,15,15,12,16,0
     9610 data 0,0,192,224,240,192,128,128
     9620 data 144,224,224,224,224,192,32,0
-    9980 call turbo off
+  
 9990 return 
 
-1 'En screen 2'
+1 'Rutina cargar la definición y colores de tiles en screen 2'
     10000 call turbo on
-    1 'Ponemos que en la parte del mapa solo se vea el ultimo tile, dejamos el 3 tercio sin tocar para el marcador
-    1 'en realidad la tabla de nombres son 768 bytes'
-    10005 FOR t=6144 TO (6144+768)-97
-        10010 vpoke t,255
-    10020 next t
-
-
     1' Hay que recordar la estructura de la VRAM, el tilemap se divide en 3 zonas
     1 'Nuestro tileset son X tiles o de 0 hasta el X-1'
     1 'Definiremos a partir de la posición 0 de la VRAM 18 tiles de 8 bytes'
@@ -161,7 +154,7 @@
         13030 VPOKE 10240+I,VAL("&H"+A$): '&h2800'
         13040 VPOKE 12288+I,VAL("&H"+A$): ' &h3000'
     13050 NEXT I
-
+    13060 call turbo off
 
     
     17740 DATA 81,F8,F8,81,81,81,81,81
@@ -244,25 +237,15 @@
     18510 DATA 11,11,11,11,11,11,11,11
     18520 DATA 11,11,11,11,11,11,11,11
     18530 DATA 11,11,11,11,11,11,11,11
+18990 return
 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    19000 call turbo off
-19990 return
-
-
+1 'Rutina borrar pantalla'
+1 'Ponemos que en la parte del mapa solo se vea el ultimo tile, dejamos el 3 tercio sin tocar para el marcador
+1 'en realidad la tabla de nombres son 768 bytes'
+    19000 FOR t=6144 TO (6144+768)-97
+        19010 vpoke t,255
+    19020 next t
+19090 return
 
 
 1 '14336 / h3800 -> 16383 / 3fff
