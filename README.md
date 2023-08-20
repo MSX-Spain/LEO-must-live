@@ -15,7 +15,7 @@ https://msx-spain.github.io/LEO-must-live/?disk=game.dsk
 
 # Instructions
 
-Conduce a Leo no te salgas de salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todas las monedas que encuentres para sumar puntos e intenta llegar hasta el final.
+Conduce a Leo y no te salgas de salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todas las monedas que encuentres para sumar puntos e intenta llegar hasta el final.
 
 Drive Leo don't go off the road, be careful! Leo goes very fast and you can get confused on the way, collect all the coins you find to score points and try to reach the end.
 
