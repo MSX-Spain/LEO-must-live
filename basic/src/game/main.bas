@@ -152,7 +152,7 @@
 
 
 1 'Compresión RLE-16'
-    20200 call turbo on (m())
+    20200 'call turbo on (m())
     20205 for r=0 to 15
         20210 READ mp$:po=0
         20220 for c=0 to len(mp$) step 4
@@ -166,11 +166,11 @@
             20300 next i
         20310 next c
     20320 next r
-    20325 call turbo off
+    20325 'call turbo off
 20330 return
 
 1 'ponemos en la tabla nombres los tiles
-    21000 _TURBO ON (m(),mc,f)
+    21000 '_TURBO ON (m(),mc,f)
     21002 mc=mc+1
     21005 md=6144+(32*f)
     21010 for f=f to 15
@@ -181,7 +181,7 @@
             21050 md=md+1
         21060 next c
     21070 next f
-    21080 _TURBO OFF
+    21080 '_TURBO OFF
 21090 return 
 
 1 'Level 1
