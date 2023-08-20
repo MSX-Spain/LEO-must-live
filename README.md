@@ -1,10 +1,9 @@
 
 # LEO must live
 
-LEO debe vivir es una idea de Pedro Otalora para el grupo (MSX spain)[http://msx.tipolisto.es/quien-somos] esperamos que sea un juego para el (MSXBlog Konamito contest)[https://www.msxblog.es/].
+LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain](http://msx.tipolisto.es/quien-somos) esperamos que sea un juego para el [MSXBlog Konamito contest](https://www.msxblog.es/).
 
-LEO must live we hope it will be a game for the LEO must live is an idea by Pedro Otalora for the group (MSX spain)[http://msx.tipolisto.es/quien-somos] we hope it will be a game for him (MSXBlog Konamito contest)[https://www.msxblog.es/]
-
+LEO must live we hope it will be a game for the LEO must live is an idea by Pedro Otalora for the group [MSX spain](http://msx.tipolisto.es/quien-somos) we hope it will be a game for him  [MSXBlog Konamito contest](https://www.msxblog.es/).
 
 <img src="docs/leo.PNG" width="100px">
 
