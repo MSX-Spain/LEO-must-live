@@ -10,14 +10,14 @@
 
 1 '****Variables del juego*****'
 1 'm()=mapa, se utiliza como buffer para almacenar los datas y hacer un pintado y detector de colisión rápido'
-1 'md=mapa direction, dirección en la memoria vram'
+1 'd=mapa direction, dirección en la memoria vram'
 1 'mp$, r$, tn$, tn, re=variables solo utilizadas en imprimir pantalla para el manejo de strings '
 1 'r, c=row and column for bucle help, solo utilizadas en imprimir pantalla'
 1 'f=file, indica a la subrrutina pintar pantalla (20200) por que fila debe de empezar a pintar, terminará de pintar en f+8'
 1 'sc=fase o screen'
 1 'sl=screen limit, cuando lleguemos a screen lmit mostraremos el mensaje de juego completado y volveremos al principio'
 1 'me$=mensaje'
-1 'mc=counter map, para ir pintando el mapa con los tiles'
+1 'n=number,counter map, irá aumentando según vayamos avanzando en el mapa para pintar otros márgenes de la pantalla ayudándonos del array'
 1 'ml=limit map, el ancho del mapa, cuando lleguemos al final mapa no se repintará'
 1 's$=puntuación en string, solo aparece en la subrrutina impimir HUD'
 1 'ls=lengh score=para ver la cantidad de caractéres y así poder imprimir los tiles de la puntuación, solo parace en imprimir HUD'
@@ -60,7 +60,7 @@
 1 ' 21000-21090 Pintar pantalla, ponemos en la tabla nombres los tiles'
 
 100 dim m(120,16):dim td(2)
-110 f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=6:tf=32:mc=0:ml=88:t0=0
+110 f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=6:tf=32:n=0:ml=88:t0=0
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio'
@@ -93,7 +93,7 @@
     200 j=STICK(0) OR STICK(1)
     1 ' on variable goto numero_linea1, numero_linea2,etc salta a la linea 1,2,etc o si es cero continua la ejecución '
     210 ON j GOTO 230,250,270,290,310,330,350,370
-    220 p=p0:if mc<ml then swap p0,p1:goto 400 else goto 400
+    220 p=p0:if n<ml then swap p0,p1:goto 400 else goto 400
     1 'movimiento hacia arriba 
     1 'Ponemos el sprite correspondiente que mira hacia arriba que irá alternando ente 2 sprites'
     230 y=y-h:p=p4:swap p4,p5:goto 400
@@ -116,38 +116,40 @@
 
     
     1 'Chekeo de límites'
-    400 IF Y<40 THEN Y=40 else if y>120 then y=120
+    400 IF y<40 THEN y=40 else if y>112 then y=112
     410 if x<0 then x=0 else if x>250 then x=250
 
     1 'Colisiones con el mapa'
     420 px=x/8:py=y/8
     1 'Recuerda que trabajamos con sprites de 16x16, es decir 4 sprites de 8x8 pixeles'
-    430 t0=m(px+1+mc,py+1)
+    430 t0=m(px+1+n,py+1)
     1 'Se se tropieza con un tile de la muerte entonces:
         1 'llamamos a la subrrutina player muere (3000)'
     440 if t0=td(0) or t0=td(1) then gosub 3000 
+    1 'Debug'
     1 '440 if t0=td(0) or t0=td(1) then mu=6:gosub 4000
     1 'Si no si el tile es un Tile Money(tm) entonces'
         1 'Hacemos un sonido re=6:gosub 4000'
         1 'actualizamos el array con los cabios'
         1 'aumentamos el sc=score'
         1 'actualizmos el marcador (2200)'
-    445 if t0=tm then mu=8:gosub 4000:m(px+1+mc,py+1)=tf:s=s+10:gosub 2200
+    445 if t0=tm then mu=8:gosub 4000:m(px+1+n,py+1)=tf:s=s+10:gosub 2200
 
     1 'Render'
     450 PUTSPRITE0,(X,Y),4,P
     1 '450 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
      
     1 'Si estamos en el final ralentizamos a LEO'
-    460 if mc=ml then for i=0 to 100:next i
+    460 if n=ml then for i=0 to 100:next i
     1 ' si estamos en el final del scroll y la posición del player es mayor de 240 llamamos a la subrrutina de cambiar pantalla (20000)
-    470 if mc=ml and x>240 then gosub 20000
+    470 if n=ml and x>240 then gosub 20000
    
     1 'moviendo el tercio superior'
-    480 if mc mod 10=0 and mc<ml then f=0:gosub 21000
+    480 if n mod 10=0 and n<ml then f=0:gosub 21000
     1 'moviendo el tercio central'
-    485 if mc<ml then f=7:gosub 21000
-    1 '486 me$=str$(mc):gosub 2000
+    485 if n<ml then f=7:gosub 21000
+    1 'Debug'
+    1 '486 me$=str$(n):gosub 2000
 500 goto 200
 
 1 'imprimir mensajes sin pausa (necesita que esté inicializada me$)''
@@ -186,7 +188,7 @@
         1 'Reiniciamos el juego(goto 110)'
     3030 if l<=0 then put sprite 0,(0,212),4,p:gosub 19000:me$="^Game over":gosub 2100:goto 110
     1 'reseteamos el contador e imprimimos la parte central de la pantalla'
-    3040 mc=0:f=7:gosub 21000
+    3040 n=0:f=7:gosub 21000
     3050 x=0:y=9*8:PUT SPRITE0,(X,Y),4,0
     1 'Mostramos el mensaje con la pausa'
     3060 me$="^Ready press space":gosub 2100
@@ -213,7 +215,7 @@
     1  '4030 if mu=2 then PLAY s7$,s8$,s9$
     1  '1 ' Game over
     1  '4040 if mu=3 then PLAY s4$,s5$,s6$
-    1  '4050 if mu=5 then play "l10 o3 v4 g c"
+    4050 if mu=5 then play "l10 o3 v4 g c"
     1 'Moneda cogida'
     4060 if mu=6 then play"t250 o4 v12 d v9 e" 
     1 'Inicio level'
@@ -241,7 +243,7 @@
     1 'Volvemos a cargar el array con los nuevos datas'
     20040 gosub 20200
     1 'Pintamos la parte de arriba de la pantalla'
-    20050 mc=0:f=0:gosub 21000
+    20050 n=0:f=0:gosub 21000
     1 'Pintamos la parte central de la pantalla'
     20060 f=7:gosub 21000
     1 'Imprimimos el marcador'
@@ -263,7 +265,8 @@
             20250 tn=val("&h"+tn$):tn=tn-1
             20260 re=val("&h"+r$)
             20270 for i=0 to re
-                20280 if tn<>0 and tn<>-1 then m(po,r)=tn:po=po+1
+                1 '20280 if tn<>0 and tn<>-1 then m(po,r)=tn:po=po+1
+                20280 m(po,r)=tn:po=po+1
             20300 next i
         20310 next c
     20320 next r
@@ -271,29 +274,27 @@
 20330 return
 1 ' Pintar pantalla estática
     20500 _TURBO ON(m())
-    20510 md=6144
-    20520 for f=0 to 15
+    20510 d=6144
+    20520 for r=0 to 15
         1 ' ahora leemos las columnas c, 63 son 32 tiles
         20530 for c=0 to 31
-            20540 tn=m(c,f)
-            20550 VPOKE md,tn
-            20560 md=md+1
+            20550 VPOKE d,m(c,r)
+            20560 d=d+1
         20570 next c
-    20580 next f
+    20580 next r
     20590 _TURBO OFF
 20599 return 
 1 ' Pintar pantalla, ponemos en la tabla nombres los tiles
-    21000 _TURBO ON (m(),mc,f)
-    21002 mc=mc+1
-    21005 md=6144+(32*f)
-    21010 for f=f to 15
+    21000 _TURBO ON (m(),n,f)
+    21002 n=n+1
+    21005 d=6144+(32*f)
+    21010 for r=f to 15
         1 ' ahora leemos las columnas c, 63 son 32 tiles
-        21020 for c=mc to 31+mc
-            21030 tn=m(c,f)
-            21040 VPOKE md,tn
-            21050 md=md+1
+        21020 for c=n to 31+n
+            21040 VPOKE d,m(c,r)
+            21050 d=d+1
         21060 next c
-    21070 next f
+    21070 next r
     21080 _TURBO OFF
 21090 return 
 

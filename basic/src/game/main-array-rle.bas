@@ -10,14 +10,14 @@
 
 1 '****Variables del juego*****'
 1 'm()=mapa, se utiliza como buffer para almacenar los datas y hacer un pintado y detector de colisión rápido'
-1 'md=mapa direction, dirección en la memoria vram'
+1 'd=mapa direction, dirección en la memoria vram'
 1 'mp$, r$, tn$, tn, re=variables solo utilizadas en imprimir pantalla para el manejo de strings '
 1 'r, c=row and column for bucle help, solo utilizadas en imprimir pantalla'
 1 'f=file, indica a la subrrutina pintar pantalla (20200) por que fila debe de empezar a pintar, terminará de pintar en f+8'
 1 'sc=fase o screen'
 1 'sl=screen limit, cuando lleguemos a screen lmit mostraremos el mensaje de juego completado y volveremos al principio'
 1 'me$=mensaje'
-1 'mc=counter map, para ir pintando el mapa con los tiles'
+1 'n=number,counter map, irá aumentando según vayamos avanzando en el mapa para pintar otros márgenes de la pantalla ayudándonos del array'
 1 'ml=limit map, el ancho del mapa, cuando lleguemos al final mapa no se repintará'
 1 's$=puntuación en string, solo aparece en la subrrutina impimir HUD'
 1 'ls=lengh score=para ver la cantidad de caractéres y así poder imprimir los tiles de la puntuación, solo parace en imprimir HUD'
@@ -27,7 +27,7 @@
 1 'td()=dead tiles, tiles que te matan'
 1 'tm=tile money, monedas que se pueden cocger para ganar puntos'
 1 'tf=tile floor, camino por donde debe ir el player'
-1 't3,t5,t7=tile derecha, tile abajo y tile izquierda'
+1 't0,t3,t5,t7=t0:tile sobre el que estamos,t3:tile derecha, t5:tile abajo y t7:tile izquierda'
 
 1 'x, y=player coordinates
 1 'v=velocidad horizontal'
@@ -60,7 +60,7 @@
 1 ' 21000-21090 Pintar pantalla, ponemos en la tabla nombres los tiles'
 
 100 dim m(120,16):dim td(2)
-110 f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=4:tf=32:mc=0:ml=88
+110 f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=6:tf=32:n=0:ml=88:t0=0
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio'
@@ -93,7 +93,7 @@
     200 j=STICK(0) OR STICK(1)
     1 ' on variable goto numero_linea1, numero_linea2,etc salta a la linea 1,2,etc o si es cero continua la ejecución '
     210 ON j GOTO 230,250,270,290,310,330,350,370
-    220 p=p0:swap p0,p1:goto 400
+    220 p=p0:if n<ml then swap p0,p1:goto 400 else goto 400
     1 'movimiento hacia arriba 
     1 'Ponemos el sprite correspondiente que mira hacia arriba que irá alternando ente 2 sprites'
     230 y=y-h:p=p4:swap p4,p5:goto 400
@@ -109,43 +109,45 @@
     1 '6 Movimiento abajo izquierda'
     330 x=x-v-4:y=y+h:p=p2:swap p2,p3:goto 400
     1 '7 Movimiento izquierd'
-    350 x=x-v-4:y=y-h:p=p2:swap p2,p3:goto 400
+    350 x=x-v-4:p=p2:swap p2,p3:goto 400
     1 '8 movimiento arriba izquierda'
     370 x=x-v-4:y=y-h:p=p2:swap p2,p3
 
 
     
     1 'Chekeo de límites'
-    400 IF Y<40 THEN Y=40 else if y>120 then y=120
+    400 IF y<40 THEN y=40 else if y>112 then y=112
     410 if x<0 then x=0 else if x>250 then x=250
 
     1 'Colisiones con el mapa'
     420 px=x/8:py=y/8
-    430 t3=m(px+1+mc,py+1)
+    1 'Recuerda que trabajamos con sprites de 16x16, es decir 4 sprites de 8x8 pixeles'
+    430 t0=m(px+1+n,py+1)
     1 'Se se tropieza con un tile de la muerte entonces:
         1 'llamamos a la subrrutina player muere (3000)'
+    1 '440 if t0=td(0) or t0=td(1) then gosub 3000 
+    440 if t0=td(0) or t0=td(1) then mu=6:gosub 4000
     1 'Si no si el tile es un Tile Money(tm) entonces'
         1 'Hacemos un sonido re=6:gosub 4000'
         1 'actualizamos el array con los cabios'
         1 'aumentamos el sc=score'
         1 'actualizmos el marcador (2200)'
-    1 '440 if t3=td(0) or t3=td(1) then gosub 3000 else if t3=tm then mu=6:gosub 4000:m(px+1+mc,py+1)=tf:s=s+10:gosub 2200
-    440 if t3=td(0) or t3=td(1) then mu=6:gosub 4000 else if t3=tm then mu=6:gosub 4000:m(px+1+mc,py+1)=tf:s=s+10:gosub 2200
+    445 if t0=tm then mu=8:gosub 4000:m(px+1+n,py+1)=tf:s=s+10:gosub 2200
 
     1 'Render'
     450 PUTSPRITE0,(X,Y),4,P
     1 '450 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
      
     1 'Si estamos en el final ralentizamos a LEO'
-    460 if mc=ml then for i=0 to 100:next i
+    460 if n=ml then for i=0 to 100:next i
     1 ' si estamos en el final del scroll y la posición del player es mayor de 240 llamamos a la subrrutina de cambiar pantalla (20000)
-    470 if mc=ml and x>240 then gosub 20000
+    470 if n=ml and x>240 then gosub 20000
    
     1 'moviendo el tercio superior'
-    480 if mc mod 10=0 and mc<ml then f=0:gosub 21000
+    480 if n mod 10=0 and n<ml then f=0:gosub 21000
     1 'moviendo el tercio central'
-    485 if mc<ml then f=7:gosub 21000
-    1 '486 me$=str$(mc):gosub 2000
+    485 if n<ml then f=7:gosub 21000
+    1 '486 me$=str$(n):gosub 2000
 500 goto 200
 
 1 'imprimir mensajes sin pausa (necesita que esté inicializada me$)''
@@ -184,7 +186,7 @@
         1 'Reiniciamos el juego(goto 110)'
     3030 if l<=0 then put sprite 0,(0,212),4,p:gosub 19000:me$="^Game over":gosub 2100:goto 110
     1 'reseteamos el contador e imprimimos la parte central de la pantalla'
-    3040 mc=0:f=7:gosub 21000
+    3040 n=0:f=7:gosub 21000
     3050 x=0:y=9*8:PUT SPRITE0,(X,Y),4,0
     1 'Mostramos el mensaje con la pausa'
     3060 me$="^Ready press space":gosub 2100
@@ -211,7 +213,7 @@
     1  '4030 if mu=2 then PLAY s7$,s8$,s9$
     1  '1 ' Game over
     1  '4040 if mu=3 then PLAY s4$,s5$,s6$
-    1  '4050 if mu=5 then play "l10 o3 v4 g c"
+    4050 if mu=5 then play "l10 o3 v4 g c"
     1 'Moneda cogida'
     4060 if mu=6 then play"t250 o4 v12 d v9 e" 
     1 'Inicio level'
@@ -239,7 +241,7 @@
     1 'Volvemos a cargar el array con los nuevos datas'
     20040 gosub 20200
     1 'Pintamos la parte de arriba de la pantalla'
-    20050 mc=0:f=0:gosub 21000
+    20050 n=0:f=0:gosub 21000
     1 'Pintamos la parte central de la pantalla'
     20060 f=7:gosub 21000
     1 'Imprimimos el marcador'
@@ -261,7 +263,8 @@
             20250 tn=val("&h"+tn$):tn=tn-1
             20260 re=val("&h"+r$)
             20270 for i=0 to re
-                20280 if tn<>0 and tn<>-1 then m(po,r)=tn:po=po+1
+                1 '20280 if tn<>0 and tn<>-1 then m(po,r)=tn:po=po+1
+                20280 m(po,r)=tn:po=po+1
             20300 next i
         20310 next c
     20320 next r
@@ -269,27 +272,25 @@
 20330 return
 1 ' Pintar pantalla estática
     20500 _TURBO ON(m())
-    20510 md=6144
+    20510 d=6144
     20520 for f=0 to 15
         1 ' ahora leemos las columnas c, 63 son 32 tiles
         20530 for c=0 to 31
-            20540 tn=m(c,f)
-            20550 VPOKE md,tn
-            20560 md=md+1
+            20550 VPOKE d,m(c,f)
+            20560 d=d+1
         20570 next c
     20580 next f
     20590 _TURBO OFF
 20599 return 
 1 ' Pintar pantalla, ponemos en la tabla nombres los tiles
-    21000 _TURBO ON (m(),mc,f)
-    21002 mc=mc+1
-    21005 md=6144+(32*f)
+    21000 _TURBO ON (m(),n,f)
+    21002 n=n+1
+    21005 d=6144+(32*f)
     21010 for f=f to 15
         1 ' ahora leemos las columnas c, 63 son 32 tiles
-        21020 for c=mc to 31+mc
-            21030 tn=m(c,f)
-            21040 VPOKE md,tn
-            21050 md=md+1
+        21020 for c=n to 31+n
+            21040 VPOKE d,m(c,f)
+            21050 d=d+1
         21060 next c
     21070 next f
     21080 _TURBO OFF
@@ -324,15 +325,15 @@
 22240 data 0023012501230125062301250023032502230525012301250023012501230325002301250023012500230125012300250223012502230b250123012502230125002301250123012500230125002304250023082500230125022302250023
 22250 data 00230125012302250323032500230325022305250123012500230125012303250023012500230125002304250223012502230b25012301250223012500230125012301250023012500231125022302250023
 22260 data 7725
-22270 data 1f240b210005022101240821000505210424012100050a21022406210e240921
-22280 data 06240721000504210024032105240f2101240f2104240d2102240321000501210e240921
-22290 data 06240d210024032105240f2101240321012403210a240521022404210224062100240c21002404210424
+22270 data 1f240f2101240f2104240d21022406210e240921
+22280 data 06240d210024032105240f2101240f2104240d21022406210e240921
+22290 data 06240d21002403210524032100070a2101240321012403210a24022100070121022404210224062100240c21002404210424
 22300 data 0b2109240321072404210a24032101240d210224032102240b2103240c2100240421040a
 22310 data 0b2103240921002411210024072101240d210224032102240b2103240c21002404210424
 22320 data 062404210324092100241121002407210124032105240321022403210b240221032402210a240421040a
 22340 data 062404210324092100240c2105240321052403210524102101240621032412210424
-22350 data 06240c210124072104240e2105240821002410210124002100051b21040a
-22360 data 06240c210124072104240e2105240021000506210024102101240d211424
+22350 data 06240c210124072104240e21052408210024102101241d21040a
+22360 data 06240621000704210124072104240e21052408210024102101240d211424
 
 1 'Level 2
 22400 data 7723
@@ -342,16 +343,15 @@
 22440 data 02230548102306480d2301480c230748072304480a2307480c2301480223
 22450 data 02230548102306480d2301480c230748072304480a2307480c2301480223
 22460 data 6d260922
-22470 data 0b221c210222142101221b2106221121
-22480 data 0022000609221c2102221421012203211322032103221421
-22490 data 0b22052103220321112202210b220521012213210322032103220a210922
-22500 data 0a21002207210122032101220b2101220e2101220321052211210322032103220a210322050a
-22510 data 0a21032204210122032101220b2101220e2101220321052202210522032108220421022202211122
-22520 data 072202210322042101221121012203210c22032105220221052203210a220221022202210b22050a
-22540 data 07220b21012208210a220a210122152100220c21012213210622
-22550 data 07220b2101221e210122152100220c21012213210022050a
-22560 data 07220b2101221e210122152100220c21012213210622
-
+22470 data 0d221a2102221421012211210007082106221121
+22480 data 0d221a2102221421012209210d22032103221421
+22490 data 0d22062100220421102205210822022100070121012213210322032103220a210922
+22500 data 0a2102220121000703210022112101220e2101220421042211210322032103220a210322050a
+22510 data 0a21032205210022112101220e2101220521032205210222032108220421022202211122
+22520 data 052204210322052101221021012205210a22062102220421032203210a220221022202210b22050a
+22540 data 06220d21022206210a220a210122152100220c21012213210622
+22550 data 07220c2103221b210122152100220c21012213210022050a
+22560 data 07220c2104221a210122152100220c21012213210622
 
 1 'Level 3
 22600 data 7748
@@ -361,17 +361,15 @@
 22640 data 0148012105480321054806210448072101480123024801210348052104480621044810210c48072104480021
 22650 data 7721
 22660 data 7724
-22670 data 04240a210124092103240d210124142104240d2107240b21002404210124030a
-22680 data 04240a210124092103240d21012414210424132101240b21002405210424
-22690 data 072104240221012402210124042103240421052403210024022102240e21042402210624092102240221082406210024020a
-22700 data 0721042402210124022101240b2104240621002402210224052101240221082402210d240221022402210124042100240221002404210224
-22710 data 07210924022101240b21002402210024052101240221052402210124092101240f2100240221022402210124042100240221012404210024000a
-22720 data 0424022104240721012402210924022100240f21002402210124092101240f21002408210124002104240221022403210124
-22730 data 0424022104240721012402210924022104240b210024022105240321032402210124042106240d2102240321022402210124
+22670 data 04240b210024092103240d210124142104240d2107240b21002404210124030a
+22680 data 04240b21002409210324082100070321012414210424132101240b21002405210424
+22690 data 10210024092103240421052403210024042100240e210424052103240a2100240421072406210024020a
+22700 data 052100070021042403210024032100240b210424062100240321012405210124042106240221000700210b24092100240421002408210224
+22710 data 08210824032100240b210024022100240a21052402210124092101240f21002408210124042100240321002404210024000a
+22720 data 04240f21012402210924022100240f21002402210124092101240f21002408210124002104240321012403210124
+22730 data 04240f21012402210924022104240b210024022105240421022402210124042106240d2102240321022402210124
 22740 data 04240a210624132100240b210024022101240e2101240a210024142100240621
 22750 data 04240a21062413210d24022101240e2101240a210024022102240e2100240621
-
-
 
 1 'Level 4
 22800 data 1b230125022300250623012515230125002306250e23002500230125012303251323
