@@ -15,9 +15,9 @@ https://msx-spain.github.io/LEO-must-live/?disk=game.dsk
 
 # Instructions
 
-Conduce a Leo y no te salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todas las monedas que encuentres para sumar puntos e intenta llegar hasta el final.
+Conduce a Leo y no te salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todos los huesos que encuentres para sumar puntos e intenta llegar hasta el final.
 
-Drive Leo don't go off the road, be careful! Leo goes very fast and you can get confused on the way, collect all the coins you find to score points and try to reach the end.
+Drive Leo and don't get off the road, be careful! Leo goes very fast and you can get confused on the way, collect all the bones you find to score points and try to reach the end.
 
 
 # Development
@@ -33,8 +33,15 @@ Drive Leo don't go off the road, be careful! Leo goes very fast and you can get 
 
 ## Screens /levels
 
+Menu
+
+<img src="docs/menu.PNG" width="300px" >
+
 
 Level 1
+
+<img src="docs/level1-2.PNG"  width="300px" >
+
 
 <img src="docs/level1.PNG" >
 
@@ -71,7 +78,6 @@ Type in in the terminal or command window or unix terminal:
 
 otra opción es crear una tarea en vscode y ejecutarla
 
-
 *make clean*
 
 *make clean all*: borrar los archivos temporales y los archivos obj, dsk, rom, cas y tsx
@@ -81,7 +87,7 @@ otra opción es crear una tarea en vscode y ejecutarla
 
 src: están los archivos fuente bas y asm
 
-assets: irán los archivos creados con programas que no tienen que ser copiados pero si pueden ser automatizados
+assets: irán los archivos o los binarios generados por los programas como MSXTools, photoshop, etc:
 
     *.xspr son archivos creados con spritedevtools que serán convertidos a .bas o .bin
 
