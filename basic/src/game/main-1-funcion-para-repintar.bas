@@ -1,6 +1,6 @@
 1 '' ******************************
 1 '' Program:    Leo must live
-1 '' Autor:      MSX spain
+1 '' Autor:      MSX spain 2023
 1 '' Repository: https://github.com/MSX-Spain/LEO-must-live
 1 '' ******************************
 
@@ -64,7 +64,8 @@
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio'
-130 restore 22000: gosub 20200:gosub 20500
+130 restore 22000: gosub 20200
+135 f=0:gosub 21000:f=7:gosub 21000
 1 'Mostramos la pantalla de bienvenida'
 140 me$="^Main menu, press space key":gosub 2100
 1 'Almacenamos en el array el level 1'
@@ -88,6 +89,13 @@
 1 'Pintamos al player'
 168 put sprite 0,(x,y),4,p
 169 mu=7:gosub 4000
+1 'Pintamos la parte de arriba de la pantalla'
+170 f=0:gosub 21000
+1 'Pintamos la parte central de la pantalla'
+180 f=7:gosub 21000
+1 'Mostramos un mensaje con pausa'
+190 me$="^Press space key to start":gosub 2100
+
 
 1 'Main loop'
     200 j=STICK(0) OR STICK(1)
@@ -125,8 +133,9 @@
     430 t0=m(px+1+n,py+1)
     1 'Se se tropieza con un tile de la muerte entonces:
         1 'llamamos a la subrrutina player muere (3000)'
-    1 '440 if t0=td(0) or t0=td(1) then gosub 3000 
-    440 if t0=td(0) or t0=td(1) then mu=6:gosub 4000
+    440 if t0=td(0) or t0=td(1) then gosub 3000 
+    1 'Debug'
+    1 '440 if t0=td(0) or t0=td(1) then mu=6:gosub 4000
     1 'Si no si el tile es un Tile Money(tm) entonces'
         1 'Hacemos un sonido re=6:gosub 4000'
         1 'actualizamos el array con los cabios'
@@ -137,16 +146,16 @@
     1 'Render'
     450 PUTSPRITE0,(X,Y),4,P
     1 '450 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
-     
+    
     1 'Si estamos en el final ralentizamos a LEO'
     460 if n=ml then for i=0 to 100:next i
     1 ' si estamos en el final del scroll y la posición del player es mayor de 240 llamamos a la subrrutina de cambiar pantalla (20000)
     470 if n=ml and x>240 then gosub 20000
-   
     1 'moviendo el tercio superior'
     480 if n mod 10=0 and n<ml then f=0:gosub 21000
     1 'moviendo el tercio central'
-    485 if n<ml then f=7:gosub 21000
+    485 if n<ml then n=n+1:f=7:gosub 21000
+    1 'Debug'
     1 '486 me$=str$(n):gosub 2000
 500 goto 200
 
@@ -270,29 +279,16 @@
     20320 next r
     20325 call turbo off
 20330 return
-1 ' Pintar pantalla estática
-    20500 _TURBO ON(m())
-    20510 d=6144
-    20520 for f=0 to 15
-        1 ' ahora leemos las columnas c, 63 son 32 tiles
-        20530 for c=0 to 31
-            20550 VPOKE d,m(c,f)
-            20560 d=d+1
-        20570 next c
-    20580 next f
-    20590 _TURBO OFF
-20599 return 
+
 1 ' Pintar pantalla, ponemos en la tabla nombres los tiles
     21000 _TURBO ON (m(),n,f)
-    21002 n=n+1
     21005 d=6144+(32*f)
-    21010 for f=f to 15
+    21010 for r=f to 15
         1 ' ahora leemos las columnas c, 63 son 32 tiles
         21020 for c=n to 31+n
-            21040 VPOKE d,m(c,f)
-            21050 d=d+1
+            21040 VPOKE d,m(c,r):d=d+1
         21060 next c
-    21070 next f
+    21070 next r
     21080 _TURBO OFF
 21090 return 
 

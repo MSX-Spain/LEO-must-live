@@ -9,9 +9,10 @@
 80 me$="Loading tileset":gosub 2000
 90gosub10000
 100dimm(120,16):dimtd(2)
-110f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=6:tf=32:n=0:ml=88:t0=0
+110f=0:sc=1:sl=4:td(0)=35:td(1)=33:tm=6:tf=32:n=0:w=88:t0=0
 120x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
-130restore22000:gosub20200:gosub20500
+130restore22000:gosub20200
+135gosub20500:gosub20600
 140 me$="Main menu, press space key":gosub 2100
 150gosub20200
 160fori=0to31:vpoke6656+i,64:nexti
@@ -23,9 +24,12 @@
 167gosub2200
 168putsprite0,(x,y),4,p
 169mu=7:gosub4000
+170gosub20500
+180gosub20600
+190 me$="Press space key to start":gosub 2100
 200j=STICK(0)ORSTICK(1)
 210ONjGOTO230,250,270,290,310,330,350,370
-220p=p0:ifn<mlthenswapp0,p1:goto400elsegoto400
+220p=p0:ifn<wthenswapp0,p1:goto400elsegoto400
 230y=y-h:p=p4:swapp4,p5:goto400
 250x=x+v:y=y-h:p=p0:swapp0,p1:goto400
 270x=x+v:p=p0:swapp0,p1:goto400
@@ -34,17 +38,17 @@
 330x=x-v-4:y=y+h:p=p2:swapp2,p3:goto400
 350x=x-v-4:p=p2:swapp2,p3:goto400
 370x=x-v-4:y=y-h:p=p2:swapp2,p3
-400IFy<40THENy=40elseify>112theny=112
+400IFy<48THENy=48elseify>112theny=112
 410ifx<0thenx=0elseifx>250thenx=250
 420px=x/8:py=y/8
 430t0=m(px+1+n,py+1)
 440ift0=td(0)ort0=td(1)thengosub3000
 445ift0=tmthenmu=8:gosub4000:m(px+1+n,py+1)=tf:s=s+10:gosub2200
 450PUTSPRITE0,(X,Y),4,P
-460ifn=mlthenfori=0to100:nexti
-470ifn=mlandx>240thengosub20000
-480ifnmod10=0andn<mlthenf=0:gosub21000
-485ifn<mlthenf=7:gosub21000
+460ifn=wthenfori=0to100:nexti
+470ifn=wandx>240thengosub20000
+480ifnmod10=0andn<wthengosub20500
+490ifn<wthenn=n+1:gosub20600
 500goto200
 2000line(0,170)-(255,180),6,bf
 2010preset(0,170):print#1,me$
@@ -66,18 +70,15 @@
 3010mu=5:gosub4000
 3020l=l-1:gosub2200
     3030 if l<=0 then put sprite 0,(0,212),4,p:gosub 19000:me$="Game over":gosub 2100:goto 110
-3040n=0:f=7:gosub21000
+3040n=0:gosub20600
 3050x=0:y=9*8:PUTSPRITE0,(X,Y),4,0
     3060 me$="Ready press space":gosub 2100
 3090return
 4000a=usr2(0)
-4050ifmu=5thenplay"l10o3v4gc"
-4060ifmu=6thenplay"t250o4v12dv9e"
-4070ifmu=7thenplay"O3L8V4M8000AADFG2AAAA"
+4050ifmu=5thenplay"t255l10o3v8gc"
+4060ifmu=6thenplay"t255o4v12dv9e"
+4070ifmu=7thenplay"t255O3L8V8M8000AADFG2AAAA"
 4080ifmu=8thensound1,2:sound8,16:sound12,5:sound13,9
-4090ifmu=9thenPLAY"o3l64t255v4m6500c"
-4100ifmu=10thensound1,2:sound6,25:sound8,16:sound12,1:sound13,9
-4110ifmu=11thensound1,0:sound6,25:sound8,16:sound12,4:sound13,9
 4199return
 20000mu=7:gosub4000
 20005sc=sc+1
@@ -85,8 +86,8 @@
     20020 if sc=sl then gosub 19000:me$="Congratulations, final":gosub 2100:goto 110
     20030 me$="Loading next level...":gosub 2000
 20040gosub20200
-20050n=0:f=0:gosub21000
-20060f=7:gosub21000
+20050n=0:gosub20500
+20060gosub20600
 20070gosub2200
 20075x=0:y=9*8:putsprite0,(x,y),4,p
     20080 me$="Press space key":gosub 2100
@@ -105,28 +106,25 @@
 20310nextc
 20320nextr
 20325callturbooff
-20330return
-20500_TURBOON(m())
+20390return
+20500_TURBOON(m(),n)
 20510d=6144
 20520forr=0to15
-20530forc=0to31
-20550VPOKEd,m(c,r)
-20560d=d+1
-20570nextc
-20580nextr
-20590_TURBOOFF
-20599return
-21000_TURBOON(m(),n,f)
-21002n=n+1
-21005d=6144+(32*f)
-21010forr=fto15
-21020forc=nto31+n
-21040VPOKEd,m(c,r)
-21050d=d+1
-21060nextc
-21070nextr
-21080_TURBOOFF
-21090return
+20530forc=nto31+n
+20540VPOKEd,m(c,r):d=d+1
+20550nextc
+20560nextr
+20570_TURBOOFF
+20590return
+20600_TURBOON(m(),n)
+20610d=6368
+20620forr=7to15
+20630forc=nto31+n
+20640VPOKEd,m(c,r):d=d+1
+20650nextc
+20660nextr
+20670_TURBOOFF
+20690return
 22000data1f23
 22010data0e230010001100120d23
 22020data0923001000110012012300300031003201230010001100120823
