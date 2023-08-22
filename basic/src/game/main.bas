@@ -260,11 +260,11 @@
     20325 call turbo off
 20390 return
 
-1 ' scroll tecio superior
+1 ' Scroll tercio superior
     20500 _TURBO ON (m(),n)
     20510 d=6144
     20520 for r=0 to 15
-        1 ' ahora leemos las columnas c, 63 son 32 tiles
+        1 ' Ahora leemos las columnas c hasta 32, (recuerda que para en la 88 que es 120-32)
         20530 for c=n to 31+n
             20540 VPOKE d,m(c,r):d=d+1
         20550 next c
@@ -273,12 +273,11 @@
 20590 return 
 
 
-1 ' scroll tercio central
+1 ' Scroll tercio central
     20600 _TURBO ON (m(),n)
     1 '6144+(32*7filas)'
     20610 d=6368
     20620 for r=7 to 15
-        1 ' ahora leemos las columnas c, 63 son 32 tiles
         20630 for c=n to 31+n
             20640 VPOKE d,m(c,r):d=d+1
         20650 next c

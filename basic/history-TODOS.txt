@@ -3,4 +3,4 @@ Hacer un scroll horizontal con velocidad constante donde el gato tenga que salta
 El camino se divide de forma laberíntica en tres alturas a lo largo del recorrido. 
 Si te equivocas y vas por el camino que no tiene salida, mueres y a empezar nivel.
 
-TODO: ver 
+TODO: ver https://github.com/orgs/MSX-Spain/projects/2
