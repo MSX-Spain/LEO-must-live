@@ -24,9 +24,18 @@ Drive Leo and don't get off the road, be careful! Leo goes very fast and you can
 
 ## Spriteset
 
-<img src="docs/spriteset.PNG" width="150px">
+<img src="docs/spriteset.PNG">
 
 ## Tileset
+
+Del 0 al 4 los que aparecen en el marcador.
+
+del 5 al 9 los cogiles.
+
+del 10 al 63 ambientación.
+
+del 64 al 96 los que mueres.
+
 
 <img src="docs/tileset.PNG" >
 
@@ -53,9 +62,17 @@ Level 3
 
 <img src="docs/level3.PNG" >
 
+Level 4
 
+<img src="docs/level4.PNG" >
 
+Level 5
 
+<img src="docs/level5.PNG" >
+
+Level 6
+
+<img src="docs/level6.PNG" >
 
 
 ## Build
