@@ -7,7 +7,7 @@ LEO must live we hope it will be a game for the LEO must live is an idea by Pedr
 
 <img src="docs/leo.PNG" width="100px">
 
-<img src="docs/caratula.PNG" width="200px">
+<img src="docs/caratula.png" width="200px">
 
 ## Play online
 
