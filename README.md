@@ -9,7 +9,7 @@ LEO must live we hope it will be a game for the LEO must live is an idea by Pedr
 
 ## Play online
 
-https://msx-spain.github.io/LEO-must-live/?disk=game.dsk
+https://msx-spain.github.io/Leo-must-live/?disk=game.dsk
 
 
 
