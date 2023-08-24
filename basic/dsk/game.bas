@@ -9,7 +9,7 @@
 80 me$="Loading tileset":gosub 2000
 90gosub10000
 100dimm(120,16)
-110f=0:sc=1:sl=4:td=64:tm=6:tf=32:n=0:w=88:t0=0
+110f=0:sc=1:sl=4:td=64:tm=6:tf=32:n=0:w=88:t0=0:ex=255
 120x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 130restore22000:gosub20200
 135gosub20500:gosub20600

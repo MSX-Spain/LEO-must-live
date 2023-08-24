@@ -61,7 +61,7 @@
 
 100 dim m(120,16)
 1 'el ancho de cada nivel son 120 tiles-32=88, 88 son los que tiene que hacer el scroll'
-110 f=0:sc=1:sl=4:td=64:tm=6:tf=32:n=0:w=88:t0=0
+110 f=0:sc=1:sl=4:td=64:tm=6:tf=32:n=0:w=88:t0=0:ex=255
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio (rutina 20200)'
@@ -138,6 +138,7 @@
      1 'Render'
     415 PUTSPRITE0,(X,Y),4,P
 
+    1 '416 if n>0 and n<47 then ex=255-(n*8):PUT SPRITE 2,(ex,80),6,9
     1 '1 'Rutina de salto'
     1 '1 'Si la pantalla es menor de 3 no habrá salto'
     1 '416 if sc<3 then goto 415
