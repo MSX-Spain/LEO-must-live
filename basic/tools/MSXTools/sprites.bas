@@ -9,7 +9,7 @@
 10280 for i=0 to 11:sp$=""
 	10290 for j=0 to 15
 		10300 read a$
-		10310 sp$=sp$+chr$(val(a$))
+		10310 sp$=sp$+chr$(val(a$)) 
 	10320 next J
 	10330 color sprite$(i)=sp$
 10340 next I

@@ -1,21 +1,24 @@
 
-# LEO must live
+# LEO must live :dog:
 
 LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain](http://msx.tipolisto.es/quien-somos) esperamos que sea un juego para el [MSXBlog Konamito contest](https://www.msxblog.es/).
 
 LEO must live we hope it will be a game for the LEO must live is an idea by Pedro Otalora for the group [MSX spain](http://msx.tipolisto.es/quien-somos) we hope it will be a game for him  [MSXBlog Konamito contest](https://www.msxblog.es/).
 
+
+:hearts:
+
 <img src="docs/leo.PNG" width="100px">
 
 <img src="docs/caratula.png" width="200px">
 
-## Play online
+## Play online :video_game:
 
 https://msx-spain.github.io/Leo-must-live/?disk=game.dsk
 
 
 
-# Instructions
+# Instructions :dog2:
 
 Conduce a Leo y no te salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todos los huesos que encuentres para sumar puntos e intenta llegar hasta el final.
 

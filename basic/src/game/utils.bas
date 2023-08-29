@@ -11,7 +11,7 @@
     1 '    9260 sprite$(i)=sp$
     1 '9270 next i
     9010 'call turbo on
-    9020 for i=0 to (32*11)-1
+    9020 for i=0 to (32*12)-1
         9030 read b:vpoke 14336+i,b
     9040 next i
     9050 call turbo off
@@ -60,7 +60,7 @@
     9390 data 0,0,31,255,255,127,0,0
     9400 data 0,0,0,0,0,0,0,112
     9410 data 248,240,248,255,255,252,0,0
-    1 ' 10810 rem data definition sprite 9, name: Sprite-9
+    1 '1 ' 10810 rem data definition sprite 9, name: Sprite-9
     9420 data 3,11,7,1,3,18,19,31
     9430 data 7,3,3,3,7,6,14,14
     9440 data 192,192,192,64,192,194,198,248
@@ -88,9 +88,6 @@
         10037 VPOKE 2048+I,VAL("&H"+A$)
         10038 VPOKE 4096+I,VAL("&H"+A$)
     10039 NEXT I
-
-
-
     10040 DATA E7,40,20,7E,3C,18,00,00
     10050 DATA 00,18,3C,42,42,42,42,00
     10060 DATA 24,FE,A4,7E,25,25,7F,24
@@ -298,7 +295,7 @@
     18670 DATA 31,31,31,31,31,31,31,31
     18680 DATA 31,31,31,31,31,31,31,31
     18690 DATA 31,31,31,31,31,31,31,31
-18990 return
+18999 return
 
 1 'Rutina borrar pantalla'
 1 'Ponemos que en la parte del mapa solo se vea el ultimo tile, dejamos el 3 tercio sin tocar para el marcador
