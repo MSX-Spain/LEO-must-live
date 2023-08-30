@@ -70,42 +70,43 @@
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio (rutina 20200)'
-130 restore 21000: gosub 20200
+125 restore 21000: gosub 20200
 1 'Pintamos toda la pantalla
-135 gosub 20800
+130 gosub 20800
 1 'Mostramos la pantalla de bienvenida'
-140 me$="^Main menu, press space key":gosub 2100
+135 me$="^Main menu, press space key":gosub 2100
 1 'Almacenamos en el array el level 1'
-150 gosub 20200
+140 gosub 20200
 1 'Pintamos el fondo del HUD'
 1 'Pintamos el marco'
 1 'Para calcular el último tercio del mapa, 6144+256+256=6656
 1 'la 2 fila sería 6656+32=6688'
 1 'la 3 fila sería 6656+(32*2)=6720'
-160 for i=0 to 31: vpoke 6656+i,39:next i 
-161 VPOKE 6688,39:VPOKE 6719,39:VPOKE 6720,39:VPOKE 6751,39:VPOKE 6752,39:VPOKE 6783,39
+145 for i=0 to 31: vpoke 6656+i,39:next i 
+150 VPOKE 6688,39:VPOKE 6719,39:VPOKE 6720,39:VPOKE 6751,39:VPOKE 6752,39:VPOKE 6783,39
 1 'Pintamos el corazón de las vidas'
-163 VPOKE 6690,0
+155 VPOKE 6690,0
 1 'Pintamos la casa que indica la pantalla en la que estamos'
-164 VPOKE 6696,1
+160 VPOKE 6696,1
 1 'Pintamos el signo de puntuación para los puntos de las mnedas cogidas'
 165 VPOKE 6702,2
-166 for i=0 to 31: vpoke 6784+i,39:next i 
+170 for i=0 to 31: vpoke 6784+i,39:next i 
 1 'Pintamos el marcador'
-167 gosub 2200
+175 gosub 2200
 1 'Pintamos al player'
-168 put sprite 0,(x,y),15,p
-169 mu=7:gosub 4000
+190 put sprite 0,(x,y),15,p
+195 mu=7:gosub 4000
 1 'Pintamos toda la pantalla
-170 gosub 20800
+196 gosub 20800
 1 'Mostramos un mensaje con pausa'
-190 me$="^Press space key to start":gosub 2100
+197 me$="^Press space key to start":gosub 2100
 1 'Cuando haya una colisión de sprites el player muere'
-1 '196 strig(0) on:on strig gosub 5000:me$="^Press space to jump":gosub 2000
 198 ON SPRITE GOSUB 3000:sprite on
+1 'Inicializamos los enemigos del 1 level '
 199 gosub 6000
 
-
+1 'Debug'
+1 '199 strig(0) on:on strig gosub 5000:me$="^Press space to jump":gosub 2000
 
 1 'Main loop :loop:'
     200 j=STICK(0) OR STICK(1)
@@ -220,28 +221,28 @@
 
 
 3000 'player muere'
-    3010 mu=5:gosub 4000:a=0:sprite off
+    3010 mu=5:gosub 4000:a=0:sprite off:strig(0) off
     1 'hacemos una pqueña pausa'
-    3011 for i=0 to 1000:next i
-    3015 x=0:y=9*8:PUT SPRITE 0,(X,Y),15,0
-    1 'Las pantallas de salto son las 2, y 6'
-    3016 if sc=2 or sc=4 or sc=6 then strig(0) on:on strig gosub 5000:sprite off:me$="^Press space to jump":gosub 2000
-    1 'Las pantallas de los sprites son las 1,3 y5'
-    3017 if sc=1 or sc=3 or sc=5 then on sc gosub 6000, 3017,7000, 3017,8000:sprite on:strig(0) off
-    3025 for i=0 to 2:put sprite 2+i,(ex(i),ey(i)),0,0
+    3020 for i=0 to 1000:next i
+    3030 x=0:y=9*8:PUT SPRITE 0,(X,Y),15,0
+    3035 for i=0 to 2:put sprite 2+i,(ex(i),ey(i)),0,0
     1 'Restamos una vida'
     1 '2200: imprimir HUD'
-    3030 l=l-1:gosub 2200
+    3040 l=l-1:gosub 2200
     1 'Si al player no le quedan vidas(l) entonces: 
         1 'sacamos a leo de la pantalla'
         1 '19000 borrar pantalla'
         1 '2100: mmostrar mensaje con pausa '
         1 'Reiniciamos el juego(goto 110)'
-    3040 if l<=0 then put sprite 0,(0,212),15,p:gosub 19000:me$="^Game over":gosub 2100:goto 110
+    3050 if l<=0 then put sprite 0,(0,212),15,p:gosub 19000:me$="^Game over":gosub 2100:goto 110
+    1 'Las pantallas de salto son las 2, 4 y 6'
+    3060 if sc=2 or sc=4 or sc=6 then strig(0) on:on strig gosub 5000:sprite off:me$="^Press space to jump":gosub 2000
+    1 'Las pantallas de los sprites son las 1,3 y5'
+    3070 if sc=1 or sc=3 or sc=5 then on sc gosub 6000, 3017,7000, 3017,8000:sprite on:strig(0) off
     1 'reseteamos el contador e imprimimos la parte central de la pantalla'
-    3050 n=0:gosub 20600
+    3080 n=0:gosub 20600
     1 'Mostramos el mensaje con la pausa'
-    3080 me$="^Ready press space":gosub 2100
+    3085 me$="^Ready press space":gosub 2100
 3090 return
 
 

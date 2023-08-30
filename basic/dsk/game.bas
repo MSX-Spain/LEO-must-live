@@ -11,21 +11,21 @@
 100dimm(120,16):dimex(3):dimey(3):dimev(3):dimec(3)
 110f=0:sc=1:sl=7:td=48:tm=6:tf=32:n=0:w=88:t0=0
 120x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
-130restore21000:gosub20200
-135gosub20800
-140 me$="Main menu, press space key":gosub 2100
-150gosub20200
-160fori=0to31:vpoke6656+i,39:nexti
-161VPOKE6688,39:VPOKE6719,39:VPOKE6720,39:VPOKE6751,39:VPOKE6752,39:VPOKE6783,39
-163VPOKE6690,0
-164VPOKE6696,1
+125restore21000:gosub20200
+130gosub20800
+135 me$="Main menu, press space key":gosub 2100
+140gosub20200
+145fori=0to31:vpoke6656+i,39:nexti
+150VPOKE6688,39:VPOKE6719,39:VPOKE6720,39:VPOKE6751,39:VPOKE6752,39:VPOKE6783,39
+155VPOKE6690,0
+160VPOKE6696,1
 165VPOKE6702,2
-166fori=0to31:vpoke6784+i,39:nexti
-167gosub2200
-168putsprite0,(x,y),15,p
-169mu=7:gosub4000
-170gosub20800
-190 me$="Press space key to start":gosub 2100
+170fori=0to31:vpoke6784+i,39:nexti
+175gosub2200
+190putsprite0,(x,y),15,p
+195mu=7:gosub4000
+196gosub20800
+197 me$="Press space key to start":gosub 2100
 198ONSPRITEGOSUB3000:spriteon
 199gosub6000
 200j=STICK(0)ORSTICK(1)
@@ -78,16 +78,16 @@
 2280nexti
 2290return
 3000'playermuere'
-3010mu=5:gosub4000:a=0:spriteoff
-3011fori=0to1000:nexti
-3015x=0:y=9*8:PUTSPRITE0,(X,Y),15,0
-    3016 if sc=2 or sc=4 or sc=6 then strig(0) on:on strig gosub 5000:sprite off:me$="Press space to jump":gosub 2000
-3017ifsc=1orsc=3orsc=5thenonscgosub6000,3017,7000,3017,8000:spriteon:strig(0)off
-3025fori=0to2:putsprite2+i,(ex(i),ey(i)),0,0
-3030l=l-1:gosub2200
-    3040 if l<=0 then put sprite 0,(0,212),15,p:gosub 19000:me$="Game over":gosub 2100:goto 110
-3050n=0:gosub20600
-    3080 me$="Ready press space":gosub 2100
+3010mu=5:gosub4000:a=0:spriteoff:strig(0)off
+3020fori=0to1000:nexti
+3030x=0:y=9*8:PUTSPRITE0,(X,Y),15,0
+3035fori=0to2:putsprite2+i,(ex(i),ey(i)),0,0
+3040l=l-1:gosub2200
+    3050 if l<=0 then put sprite 0,(0,212),15,p:gosub 19000:me$="Game over":gosub 2100:goto 110
+    3060 if sc=2 or sc=4 or sc=6 then strig(0) on:on strig gosub 5000:sprite off:me$="Press space to jump":gosub 2000
+3070ifsc=1orsc=3orsc=5thenonscgosub6000,3017,7000,3017,8000:spriteon:strig(0)off
+3080n=0:gosub20600
+    3085 me$="Ready press space":gosub 2100
 3090return
 4000a=usr2(0)
 4050ifmu=5thenplay"t255l10o3v8gc"
