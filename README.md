@@ -14,22 +14,30 @@ LEO must live we hope it will be a game for the LEO must live is an idea by Pedr
 
 ## Play online :video_game:
 
+<img src="docs/web.PNG" width="300px">
+
+### Production release
+
 https://msx-spain.github.io/Leo-must-live/?disk=game.dsk
 
+### Development debug
+https://msx-spain.github.io/Leo-must-live/?disk=game-dev.dsk
 
 
 # Instructions :dog2:
 
-Conduce a Leo y no te salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todos los huesos que encuentres para sumar puntos e intenta llegar hasta el final.
+Conduce a Leo y no te salgas del camino, ¡cuidado! Leo va muy rápido y puedes confundirte de camino, recoge todos los huesos que encuentres para sumar puntos e intenta llegar hasta el final, esquiva a los enemigos que quieren cazarte, salta en las pantallas 2,4 y 6.
 
-Drive Leo and don't get off the road, be careful! Leo goes very fast and you can get confused on the way, collect all the bones you find to score points and try to reach the end.
+Drive Leo and don't get off the road, be careful! Leo goes very fast and you can get confused on the way, collect all the bones you find to score points and try to reach the end, avoid the enemies that want to hunt you, jump on screens 2, 4 and 6.
 
 
 # Development
 
 ## Spriteset
 
-<img src="docs/spriteset.PNG">
+<img src="docs/spriteset1.PNG" width="400px">
+
+<img src="docs/spriteset2.PNG" width="400px">
 
 ## Tileset
 
@@ -54,30 +62,47 @@ Menu
 
 Level 1
 
-<img src="docs/level1-2.PNG"  width="300px" >
+Esquiva a los enemigos-dodge the enemies.
 
+<img src="docs/level1-2.PNG"  width="300px" >
 
 <img src="docs/level1.PNG" >
 
 Level 2
 
+Salta en los caminos cortados-Jump on the cut roads.
+
+<img src="docs/level2-2.PNG"  width="300px" >
+
 <img src="docs/level2.PNG" >
 
 Level 3
+
+<img src="docs/level3-2.PNG"  width="300px" >
 
 <img src="docs/level3.PNG" >
 
 Level 4
 
+<img src="docs/level4-2.PNG"  width="300px" >
+
 <img src="docs/level4.PNG" >
 
 Level 5
+
+<img src="docs/level5-2.PNG"  width="300px" >
 
 <img src="docs/level5.PNG" >
 
 Level 6
 
+<img src="docs/level6-2.PNG"  width="300px" >
+
 <img src="docs/level6.PNG" >
+
+Final
+
+<img src="docs/final.PNG"  width="300px" >
 
 
 ## Build
