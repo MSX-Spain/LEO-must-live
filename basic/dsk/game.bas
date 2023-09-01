@@ -8,9 +8,10 @@
 75gosub19000
 80 me$="Loading tileset":gosub 2000
 90gosub10000
-100dimm(120,16):dimex(3):dimey(3):dimev(3):dimec(3)
+100dimm(120,16):dimx(3):dimy(3):dimv(3):dimc(3):dimp(3)
 110f=0:sc=1:sl=7:td=48:tm=6:tf=32:n=0:w=88:t0=0
 120x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
+122e1=8:e2=9:e3=10:e4=11:e5=12:e6=13
 125restore21000:gosub20200
 130gosub20800
 135 me$="Main menu, press space key":gosub 2100
@@ -57,9 +58,9 @@
 590ifnmod10=0andn<wthengosub20500
 600ifn<wthenn=n+1:gosub20600
 610ifsc=2orsc=4orsc=6thengoto690
-620fori=0to2
-630ifn>ec(i)andn<ec(i)+25thenifnmod2=0thenputsprite2,(ex(i),ey(i)),1+i,8+i:ex(i)=ex(i)-ev(i)elseputsprite2,(ex(i),ey(i)),1+i,8+i+1:ex(i)=ex(i)-ev(i)
-650nexti
+620ifn>c(0)andn<c(0)+25thenp(0)=e1:swape1,e2:putsprite2,(x(0),y(0)),1,p(0):x(0)=x(0)-v(0):goto690
+630ifn>c(1)andn<c(1)+25thenp(1)=e3:swape3,e4:putsprite2,(x(1),y(1)),2,p(1):x(1)=x(1)-v(1):goto690
+640ifn>c(2)andn<c(2)+25thenp(2)=e5:swape5,e6:putsprite2,(x(2),y(2)),3,p(2):x(2)=x(2)-v(2)
 690goto200
 2000line(0,170)-(255,180),6,bf
 2010preset(0,170):?#1,me$
@@ -81,7 +82,7 @@
 3010mu=5:gosub4000:a=0:spriteoff:strig(0)off
 3020fori=0to1000:nexti
 3030x=0:y=9*8:PUTSPRITE0,(X,Y),15,0
-3035fori=0to2:putsprite2+i,(ex(i),ey(i)),0,0
+3035fori=0to2:putsprite2+i,(x(i),y(i)),0,0
 3040l=l-1:gosub2200
     3050 if l<=0 then put sprite 0,(0,212),15,p:gosub 19000:me$="Game over":gosub 2100:goto 110
     3060 if sc=2 or sc=4 or sc=6 then strig(0) on:on strig gosub 5000:sprite off:me$="Press space to jump":gosub 2000
@@ -97,17 +98,17 @@
 4199return
 5000ifa=0thenmu=8:gosub4000:o=y:a=1
 5090return
-6000ex(0)=255:ey(0)=72:ev(0)=12:ec(0)=1
-6010ex(1)=255:ey(1)=80:ev(1)=12:ec(1)=34
-6020ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=62
+6000x(0)=255:y(0)=72:v(0)=12:c(0)=1
+6010x(1)=255:y(1)=80:v(1)=12:c(1)=34
+6020x(2)=255:y(2)=64:v(2)=12:c(2)=62
 6090return
-7000ex(0)=255:ey(0)=72:ev(0)=12:ec(0)=1
-7010ex(1)=255:ey(1)=64:ev(1)=12:ec(1)=36
-7020ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=58
+7000x(0)=255:y(0)=72:v(0)=12:c(0)=1
+7010x(1)=255:y(1)=64:v(1)=12:c(1)=36
+7020x(2)=255:y(2)=64:v(2)=12:c(2)=58
 7090return
-8000ex(0)=255:ey(0)=64:ev(0)=12:ec(0)=1
-8010ex(1)=255:ey(1)=96:ev(1)=12:ec(1)=38
-8020ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=60
+8000x(0)=255:y(0)=64:v(0)=12:c(0)=1
+8010x(1)=255:y(1)=96:v(1)=12:c(1)=38
+8020x(2)=255:y(2)=64:v(2)=12:c(2)=60
 8090return
 20000mu=7:gosub4000:strig(0)off
 20005sc=sc+1
@@ -276,22 +277,6 @@
 22540data0a430a24064306240e430e24064301240243002400070024004309240d4304240043022400430324
 22550data7743
 22560data7743
-22600data1f23
-22610data0323003e003f005c003f005200550056003f005800590b23001100120323
-22620data1923001300140323
-22630data07230056003f003e0058005500230055005a003b005200550058003b0a23
-22640data1f23
-22650data07230051004f0051003f00230053003b003e0058004f004d003b00520a23
-22660data1f23
-22670data2023
-22680data2023
-22690data2023
-22700data2023
-22710data2023
-22720data2023
-22730data2023
-22740data2023
-22750data2023
 9000callturboon
 9005fori=0to31:putspritei,(0,212),0,0:nexti
 9010'callturboon

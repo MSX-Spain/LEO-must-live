@@ -67,11 +67,12 @@
 1 'p,p0,p1,p2,p3=sprite asignado que irá cambiando con los valores de p0 a p3'
 1 'px y py=solo aparece en las líneas 420 y 440 para hacer cálculos del tile que ocupa el player en la pantalla'
 
-1 'ex(n) posición x del enemigo'
-1 'ey(n) posición y del enemigo'
-1 'ev(n) velocidad horizontal enemigo'
-1 'ec(n) enemy counter, contador utilizado para mostrar el sprite en un rango de valores de la variable n'
-
+1 'x(n) posición x del enemigo'
+1 'y(n) posición y del enemigo'
+1 'v(n) velocidad horizontal enemigo'
+1 'c(n) enemy counter, contador utilizado para mostrar el sprite en un rango de valores de la variable n'
+1 'p(n) enmy sprite, utilizada para determinar cual es el sprite del enemigo, trabajo junto a las variables del e1 al e6'
+1 'e1,e2,e3,e4,e5,e6 para hacer las animaciones del enemigo, trabaja con p(0)
 1 '****************
 1 '***Subrrutinas**
 1 '****************
@@ -94,10 +95,11 @@
 1 ' 20200-20330 Cargar array con compresión RLE-16'
 1 ' 21000-21090 Pintar pantalla, ponemos en la tabla nombres los tiles'
 
-100 dim m(120,16):dim ex(3):dim ey(3):dim ev(3):dim ec(3)
+100 dim m(120,16):dim x(3):dim y(3):dim v(3):dim c(3):dim p(3)
 1 'el ancho de cada nivel son 120 tiles-32=88, 88 son los que tiene que hacer el scroll'
 110 f=0:sc=1:sl=7:td=48:tm=6:tf=32:n=0:w=88:t0=0
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
+122 e1=8:e2=9:e3=10:e4=11:e5=12:e6=13
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio (rutina 20200)'
 125 restore 21000: gosub 20200
@@ -139,6 +141,9 @@
 1 '199 strig(0) on:on strig gosub 5000:me$="^Press space to jump":gosub 2000
 
 1 'Main loop :loop:'
+    1 'time incrementa en 1 cada vez que el vdp genera una interrupción, es decir en 1 segundo hace 60 incrementos'
+    1 'debug time'
+        1 '200 time=0:j=STICK(0) OR STICK(1)
     200 j=STICK(0) OR STICK(1)
     1 ' on variable goto numero_linea1, numero_linea2,etc salta a la linea 1,2,etc o si es cero continua la ejecución '
     210 ON j GOTO 230,250,270,290,310,330,350,370
@@ -178,16 +183,15 @@
     510 if x<0 then x=0 else if x>250 then x=250
 
     1 'Render :framed_picture:'
-    1 '450 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
+    1 '520 vpoke 6912,y:vpoke 6913,x:vpoke 6914,p
     520 PUTSPRITE0,(X,Y),15,P
-
-
 
 
     1 'Colisiones con el mapa'
     530 px=x/8:py=y/8
     1 'Recuerda que trabajamos con sprites de 16x16, es decir 4 sprites de 8x8 pixeles'
     540 t0=m(px+1+n,py+1)
+
     1 'Se se tropieza con un tile de la muerte entonces:
         1 'llamamos a la subrrutina player muere (3000)'
     550 if t0>=td and a=0 then gosub 3000 
@@ -218,12 +222,18 @@
 
 
     1 'Render y actualizar enemigos'
-    620 for i=0 to 2
-       630 if n>ec(i) and n<ec(i)+25 then if n mod 2=0 then put sprite 2,(ex(i),ey(i)),1+i,8+i:ex(i)=ex(i)-ev(i) else put sprite 2,(ex(i),ey(i)),1+i,8+i+1:ex(i)=ex(i)-ev(i)
-    650 next i
-
+    1 '620 for i=0 to 2
+    1 '   630 if n>c(i) and n<c(i)+25 then if n mod 2=0 then put sprite 2,(x(i),y(i)),1+i,8+i:x(i)=x(i)-v(i) else put sprite 2,(x(i),y(i)),1+i,8+i+1:x(i)=x(i)-v(i)
+    1 '640 next i
+    1 '620 if n>c(0) and n<c(0)+25 then if n mod 2=0 then put sprite 2,(x(0),y(0)),1,8:x(0)=x(0)-v(0) else put sprite 2,(x(0),y(0)),1,9:x(0)=x(0)-v(0)
+    1 '630 if n>c(1) and n<c(1)+25 then if n mod 2=0 then put sprite 2,(x(1),y(1)),2,10:x(1)=x(1)-v(1) else put sprite 2,(x(1),y(1)),2,11:x(1)=x(1)-v(1)
+    1 '640 if n>c(2) and n<c(2)+25 then if n mod 2=0 then put sprite 2,(x(2),y(2)),3,12:x(2)=x(2)-v(2) else put sprite 2,(x(2),y(2)),3,13:x(2)=x(2)-v(2)
+    620 if n>c(0) and n<c(0)+25 then p(0)=e1:swap e1,e2:put sprite 2,(x(0),y(0)),1,p(0):x(0)=x(0)-v(0):goto 690
+    630 if n>c(1) and n<c(1)+25 then p(1)=e3:swap e3,e4:put sprite 2,(x(1),y(1)),2,p(1):x(1)=x(1)-v(1):goto 690
+    640 if n>c(2) and n<c(2)+25 then p(2)=e5:swap e5,e6:put sprite 2,(x(2),y(2)),3,p(2):x(2)=x(2)-v(2)
+    
     1 'Debug'
-    1 '650 me$=str$(n):gosub 2000
+    1 '680 me$=str$(time):gosub 2000
 690 goto 200
 
 1 'imprimir mensajes sin pausa (necesita que esté inicializada me$)''
@@ -255,7 +265,7 @@
     1 'hacemos una pqueña pausa'
     3020 for i=0 to 1000:next i
     3030 x=0:y=9*8:PUT SPRITE 0,(X,Y),15,0
-    3035 for i=0 to 2:put sprite 2+i,(ex(i),ey(i)),0,0
+    3035 for i=0 to 2:put sprite 2+i,(x(i),y(i)),0,0
     1 'Restamos una vida'
     1 '2200: imprimir HUD'
     3040 l=l-1:gosub 2200
@@ -301,21 +311,21 @@
 
 1 'fase 1'
 1 'inicializar enemigos'
-    6000 ex(0)=255:ey(0)=72:ev(0)=12:ec(0)=1
-    6010 ex(1)=255:ey(1)=80:ev(1)=12:ec(1)=34
-    6020 ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=62
+    6000 x(0)=255:y(0)=72:v(0)=12:c(0)=1
+    6010 x(1)=255:y(1)=80:v(1)=12:c(1)=34
+    6020 x(2)=255:y(2)=64:v(2)=12:c(2)=62
 6090 return
 1 'fase 3'
 1 'inicializar enemigos'
-    7000 ex(0)=255:ey(0)=72:ev(0)=12:ec(0)=1
-    7010 ex(1)=255:ey(1)=64:ev(1)=12:ec(1)=36
-    7020 ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=58
+    7000 x(0)=255:y(0)=72:v(0)=12:c(0)=1
+    7010 x(1)=255:y(1)=64:v(1)=12:c(1)=36
+    7020 x(2)=255:y(2)=64:v(2)=12:c(2)=58
 7090 return
 1 'fase 5'
 1 'inicializar enemigos'
-    8000 ex(0)=255:ey(0)=64:ev(0)=12:ec(0)=1
-    8010 ex(1)=255:ey(1)=96:ev(1)=12:ec(1)=38
-    8020 ex(2)=255:ey(2)=64:ev(2)=12:ec(2)=60
+    8000 x(0)=255:y(0)=64:v(0)=12:c(0)=1
+    8010 x(1)=255:y(1)=96:v(1)=12:c(1)=38
+    8020 x(2)=255:y(2)=64:v(2)=12:c(2)=60
 8090 return
 
 
@@ -536,22 +546,22 @@
 22560 data 7743
 
 1 'Final'
-22600 data 1f23
-22610 data 0323003e003f005c003f005200550056003f005800590b23001100120323
-22620 data 1923001300140323
-22630 data 07230056003f003e0058005500230055005a003b005200550058003b0a23
-22640 data 1f23
-22650 data 07230051004f0051003f00230053003b003e0058004f004d003b00520a23
-22660 data 1f23
-22670 data 2023
-22680 data 2023
-22690 data 2023
-22700 data 2023
-22710 data 2023
-22720 data 2023
-22730 data 2023
-22740 data 2023
-22750 data 2023
+1 '22600 data 1f23
+1 '22610 data 0323003e003f005c003f005200550056003f005800590b23001100120323
+1 '22620 data 1923001300140323
+1 '22630 data 07230056003f003e0058005500230055005a003b005200550058003b0a23
+1 '22640 data 1f23
+1 '22650 data 07230051004f0051003f00230053003b003e0058004f004d003b00520a23
+1 '22660 data 1f23
+1 '22670 data 2023
+1 '22680 data 2023
+1 '22690 data 2023
+1 '22700 data 2023
+1 '22710 data 2023
+1 '22720 data 2023
+1 '22730 data 2023
+1 '22740 data 2023
+1 '22750 data 2023
 
 
 1 '22600 data 1f23
