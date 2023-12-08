@@ -18,10 +18,10 @@ LEO must live we hope it will be a game for the LEO must live is an idea by Pedr
 
 ### Production release
 
-https://msx-spain.github.io/Leo-must-live/?disk=game.dsk
+https://msx-spain.github.io/Leo-must-live/?disk=game.dsk&M=MSX2E
 
 ### Development debug
-https://msx-spain.github.io/Leo-must-live/?disk=game-dev.dsk
+https://msx-spain.github.io/Leo-must-live/?disk=game-dev.dsk&M=MSX2E
 
 
 # Instructions :dog2:
