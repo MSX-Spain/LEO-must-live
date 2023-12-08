@@ -12,9 +12,12 @@
 110f=0:sc=1:sl=7:td=48:tm=6:tf=32:n=0:w=88:t0=0
 120x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 122e1=8:e2=9:e3=10:e4=11:e5=12:e6=13
+123gosub3500
 125restore21000:gosub20200
 130gosub20800
-135 me$="Main menu, press space key":gosub 2100
+132 co=0:me$="Music playing":gosub 2000:mu=1: gosub 4000
+135 me$="Main menu, press space key":gosub 2000
+137ifinkey$=""thenco=co+1:ifco>800thengoto132elsegoto137
 140gosub20200
 145fori=0to31:vpoke6656+i,39:nexti
 150VPOKE6688,39:VPOKE6719,39:VPOKE6720,39:VPOKE6751,39:VPOKE6752,39:VPOKE6783,39
@@ -90,7 +93,13 @@
 3080n=0:gosub20600
     3085 me$="Ready press space":gosub 2100
 3090return
+3500S1$="T250V13O4L4daO5ag#eV15L2gL4d#ef#gf#ed#"
+3520S2$="T250V12O2L2dL6ar64aL2dadL6ar64aL2da"
+3540S4$="T250V11O1L2aL6O2er64eL2O1aO2eO1cL6O2gr6gL2O1cO2gL2dL6ar64aL2dadL6ar64aL2da"
+3550S5$="T250V13O4L4ed#ef#gf#r2L4gf#gaa#ar2L4a#aa#aL2O5c#L4O4aa#O5c#d"
+3590return
 4000a=usr2(0)
+4010ifmu=1thenplayS3$:playS2$:playS1$,S2$:playS1$,S2$,S1$:playS4$,S5$,S1$
 4050ifmu=5thenplay"t255l10o3v8gc"
 4060ifmu=6thensound1,0:sound6,25:sound8,16:sound12,4:sound13,9
 4070ifmu=7thenplay"t255O3L8V8M8000AADFG2AAAA"

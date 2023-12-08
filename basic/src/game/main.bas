@@ -70,13 +70,19 @@
 110 f=0:sc=1:sl=7:td=48:tm=6:tf=32:n=0:w=88:t0=0
 120 x=0:y=9*8:v=8:h=8:l=9:s=0:p=0:p0=0:p1=1:p2=2:p3=3:p4=4:p5=5
 122 e1=8:e2=9:e3=10:e4=11:e5=12:e6=13
+1 ' Inicializamos la música'
+123 gosub 3500
 1 'Cargamos los tiles del menu'
 1 'Inicializamos el array con el menú, importante colocar el puntero de los datas al principio (rutina 20200)'
 125 restore 21000: gosub 20200
 1 'Pintamos toda la pantalla
 130 gosub 20800
-1 'Mostramos la pantalla de bienvenida'
-135 me$="^Main menu, press space key":gosub 2100
+1 'reproducimos la música del intro'
+132 co=0:me$="^Music playing":gosub 2000:mu=1: gosub 4000
+1 'Mostramos la pantalla de bienvenida con pausa'
+135 me$="^Main menu, press space key":gosub 2000
+1 'Repetimos la música mientras no se pulse una tecla'
+137 if inkey$="" then co=co+1:if co>800 then goto 132 else goto 137
 1 'Almacenamos en el array el level 1'
 140 gosub 20200
 1 'Pintamos el fondo del HUD'
@@ -100,7 +106,7 @@
 195 mu=7:gosub 4000
 1 'Pintamos toda la pantalla
 196 gosub 20800
-1 'Mostramos un mensaje con pausa'
+1 'Mostramos un mensaje sin pausa'
 197 me$="^Press space key to start":gosub 2100
 1 'Cuando haya una colisión de sprites el player muere'
 198 ON SPRITE GOSUB 3000:sprite on
@@ -257,11 +263,19 @@
     3085 me$="^Ready press space":gosub 2100
 3090 return
 
-
+1 ' inicializar música
+    3500 S1$="T250V13O4L4daO5ag#eV15L2gL4d#ef#gf#ed#"
+    1'3510 S6$="T250V11O3L4gO4dO5dc#O4aO5cL2cL4g#abO6cO5bag#"
+    3520 S2$="T250V12O2L2dL6ar64aL2dadL6ar64aL2da"
+    1 '3530 S3$="T250V11S14M500 L4cO6cO8cO4g#g"
+    3540 S4$="T250V11O1L2aL6O2er64eL2O1aO2eO1cL6O2gr6gL2O1cO2g L2dL6ar64aL2dad L6ar64aL2da"
+    3550 S5$="T250V13O4L4ed#ef#gf# r2L4gf#gaa#a r2L4a#aa#aL2O5c#L4O4aa#O5c#d"
+3590 return
 
 1 ' Reproductor de música
     1 'Llamamos a la rutina de inicializar psg que forma parte de las rutinas de la bios'
     4000 a=usr2(0)
+    4010 if mu=1 then play S3$: play S2$: play S1$,S2$: play S1$,S2$,S1$: play S4$,S5$,S1$
     1 'player muere'
     4050 if mu=5 then play "t255 l10 o3 v8 g c"
     1 'Moneda cogida'
