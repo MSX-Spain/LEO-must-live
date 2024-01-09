@@ -130,6 +130,9 @@ rem ----------------------------------------------------------------------------
 rem Esta función prepará los archivos fuente pata incluirlos en un dsk, cas 
 
 :preparar_archivos_fuente
+    rem Copiamos el xbasic
+    if exist .\bin (copy .\bin\*.* dsk) 
+
     rem del /F /Q obj\loader.bas
     rem creamos la carpeta obj (objects) si no existe, si existe borramos su contenido
     rem If not exist .\obj (md .\obj) else (call :clean_objets)

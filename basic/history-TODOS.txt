@@ -1,3 +1,1 @@
-Al terminar el juego se recuerda el espacio y vuele a empezar solo
-
 TODO: ver https://github.com/orgs/MSX-Spain/projects/2
