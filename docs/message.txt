@@ -1,0 +1,16 @@
+Nombre del juego / game name: Leo must live
+Developments: MSX Spain
+email: msxspain@tipolisto.es
+Github: https://github.com/MSX-Spain/Leo-must-live
+Instrucciones de carga / loading instructions: Simplemente haz click en este enlace / Just click on this link->https://msx-spain.github.io/Leo-must-live/?disk=game.dsk&M=MSX2E
+Enlace / link MSXPen: https://msxpen.com/codes/-NrS6EhWbp_yqMlxl6QV
+DSK file: https://github.com/MSX-Spain/Leo-must-live/blob/main/docs/game.dsk
+Game-instructions: https://github.com/MSX-Spain/Leo-must-live/blob/main/basic/src/game/main.bas
+
+
+
+MSXblog contest instructions:https://www.msxblog.es/reglas-del-concurso-40-aniversario-msx-basic/
+MSXblog contest email: concursomsxbasic@msxblog.es
+
+
+
