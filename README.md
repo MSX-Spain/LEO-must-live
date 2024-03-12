@@ -1,10 +1,15 @@
 
 # LEO must live :dog:
 
-LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain](http://msx.tipolisto.es/quien-somos) esperamos que sea un juego para el [MSXBlog Konamito contest](https://www.msxblog.es/).
+LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain], (http://msx.tipolisto.es/quien-somos), música de Clemente Tiñena. La idea es participar en el concurso 40 aniversaeio MSX Basic de la web [MSXBlog](https://www.msxblog.es/).
 
-LEO must live we hope it will be a game for the LEO must live is an idea by Pedro Otalora for the group [MSX spain](http://msx.tipolisto.es/quien-somos) we hope it will be a game for him  [MSXBlog Konamito contest](https://www.msxblog.es/).
+Hemos sido los ganadores!!!
 
+https://www.msxblog.es/resultado-final-del-concurso-40-aniversario-msx-basic/
+
+LEO must live we hope it will be a game for the LEO must live is an idea by Pedro Otalora (Music by Clemente Tiñena) for the group [MSX spain](http://msx.tipolisto.es/quien-somos) for [MSXBlog Konamito contest 40 aniversay MSX Basic (https://www.msxblog.es/).
+
+We are the winners of the msxblog.es contest
 
 :hearts:
 
