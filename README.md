@@ -1,7 +1,7 @@
 
 # LEO must live :dog:
 
-LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain], (http://msx.tipolisto.es/quien-somos), música de Clemente Tiñena. La idea es participar en el concurso 40 aniversaeio MSX Basic de la web [MSXBlog](https://www.msxblog.es/).
+LEO debe vivir es una idea de Pedro Otalora para el grupo [MSX spain], (http://msx.tipolisto.es/quien-somos), música de Clemente Tiñena. La idea es participar en el concurso 40 aniversario MSX Basic de la web [MSXBlog](https://www.msxblog.es/).
 
 Hemos sido los ganadores!!!
 
